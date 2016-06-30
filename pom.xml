@@ -12,6 +12,42 @@
   <packaging>jar</packaging>
   <description>DAQ module for acquiring data via REST by either polling or exposing endpoints</description>
 
+  <distributionManagement>
+    <repository>
+      <id>artifactory</id>
+      <name>cs-ccr-ap1.cern.ch-releases</name>
+      <url>http://artifactory/beco-release-local</url>
+    </repository>
+    <snapshotRepository>
+      <id>artifactory</id>
+      <name>cs-ccr-ap1.cern.ch-snapshots</name>
+      <url>http://artifactory/beco-development-local</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <repositories>
+    <repository>
+      <id>artifactory-releases</id>
+      <url>http://artifactory/release</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>artifactory-snapshots</id>
+      <url>http://artifactory/development</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <scm>
+    <url>https://gitlab.cern.ch/c2mon/c2mon-daq-testhandler</url>
+    <connection>scm:git:git://gitlab.cern.ch/c2mon/c2mon-daq-testhandler.git</connection>
+    <developerConnection>scm:git:git@gitlab.cern.ch:7999/c2mon/c2mon-daq-testhandler.git</developerConnection>
+  </scm>
+
   <dependencies>
     <!-- C2MON dependencies -->
     <dependency>
