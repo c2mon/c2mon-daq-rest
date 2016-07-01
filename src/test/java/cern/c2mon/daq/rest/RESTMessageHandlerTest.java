@@ -18,7 +18,7 @@ package cern.c2mon.daq.rest;
 
 import cern.c2mon.daq.rest.config.WebConfigTest;
 import cern.c2mon.daq.rest.webaccess.RESTConnector;
-import cern.c2mon.daq.test.GenericMessageHandlerTst;
+import cern.c2mon.daq.test.GenericMessageHandlerTest;
 import cern.c2mon.daq.test.UseConf;
 import cern.c2mon.daq.test.UseHandler;
 import cern.c2mon.daq.tools.equipmentexceptions.EqIOException;
@@ -50,7 +50,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = WebConfigTest.class)
 @WebAppConfiguration
-public class RESTMessageHandlerTest extends GenericMessageHandlerTst {
+public class RESTMessageHandlerTest extends GenericMessageHandlerTest {
 
   // reference to the instance of the handler to test
   RESTMessageHandler theHandler;
