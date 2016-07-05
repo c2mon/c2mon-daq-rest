@@ -86,10 +86,21 @@ public class PostScheduler extends RestScheduler {
       return HttpStatus.OK;
     } else {
 
-      equipmentLogger.warn("DAQ received a message with the id:" + id + ". This id is not supported from the DAQ.");
+      equipmentLogger.warn("DAQ " +equipmentConfiguration.getName()+" received a message with the id:" + id + ". This id is not supported from the DAQ.");
       return HttpStatus.BAD_REQUEST;
     }
   }
+
+
+  public Long getIdByName(String name) {
+    try {
+      return equipmentConfiguration.getSourceDataTagIdByName(name);
+    } catch (IllegalArgumentException e){
+      equipmentLogger.warn("DAQ " +equipmentConfiguration.getName()+" received a message with the name:" + name+ ". This id is not supported from the DAQ.");
+      throw e;
+    }
+  }
+
 
   @Override
   public void addTask(Long id) {
@@ -119,10 +130,6 @@ public class PostScheduler extends RestScheduler {
   private RestPostAddress getAddress(Long id) {
     return (RestPostAddress) this.equipmentConfiguration.getSourceDataTag(id).getHardwareAddress();
   }
-
-  //===========================================================================
-  // Inner helper class
-  //===========================================================================
 
   /**
    * A instance of the SendRequestTask holds all information for sending a invalid message to the equipment.

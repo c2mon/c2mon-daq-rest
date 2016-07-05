@@ -45,12 +45,36 @@ public class RestController {
    * @return The status of the request. If the request was successful to the server the request will be HttpStatus.OK.
    */
   @RequestMapping(value = "/tags/{id}", method = RequestMethod.POST)
-  public HttpStatus postHandler(@PathVariable("id") Long id, @RequestBody String value) {
+  public HttpStatus postHandlerWithId(@PathVariable("id") Long id, @RequestBody String value) {
 
     HttpStatus status = postScheduler.sendValueToServer(id, value);
     return status;
+  }
 
+  /**
+   * The method receives 'rest-post' queries.
+   * In order to ensure that the message decoding is done right the user of the post query needs to specify the
+   * header.
+   * The Header needs to be 'Content-Type: text/plain' or 'text/json'.
+   * The safest way to use this post is to use the type 'plane'.
+   *
+   * In order to send the message itself the data must be specified in the body of the HTTP request.
+   *
+   * @param name The name of the DataTag to which this message belongs
+   * @param value Tha value of the message which need to be specified in the body.
+   * @return The status of the request. If the request was successful to the server the request will be HttpStatus.OK.
+   */
+  @RequestMapping(value = "/tags/{name}", method = RequestMethod.POST)
+  public HttpStatus postHandlerWithName(@PathVariable("name") String name, @RequestBody String value) {
+    Long tagId;
+    try{
+      tagId = postScheduler.getIdByName(name);
+    } catch (Exception e){
+      return HttpStatus.BAD_REQUEST;
+    }
 
+    HttpStatus status = postScheduler.sendValueToServer(tagId, value);
+    return status;
   }
 
   public void setPostScheduler(PostScheduler scheduler) {
