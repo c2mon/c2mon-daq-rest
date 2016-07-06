@@ -17,6 +17,8 @@
 package cern.c2mon.daq.rest.controller;
 
 import cern.c2mon.daq.rest.scheduling.PostScheduler;
+import cern.c2mon.shared.common.type.TypeConverter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
  * @author Franz Ritter
  */
 @Controller
+@Slf4j
 public class RestController {
 
   private PostScheduler postScheduler;
@@ -40,36 +43,24 @@ public class RestController {
    *
    * In order to send the message itself the data must be specified in the body of the HTTP request.
    *
-   * @param id The id of the DataTag to which this message belongs
-   * @param value Tha value of the message which need to be specified in the body.
+   * @param identifier The identifier of the tag. This can either be the name of the tag or the id.
+   * @param value      Tha value of the message which need to be specified in the body.
    * @return The status of the request. If the request was successful to the server the request will be HttpStatus.OK.
    */
-  @RequestMapping(value = "/tags/{id}", method = RequestMethod.POST)
-  public HttpStatus postHandlerWithId(@PathVariable("id") Long id, @RequestBody String value) {
-
-    HttpStatus status = postScheduler.sendValueToServer(id, value);
-    return status;
-  }
-
-  /**
-   * The method receives 'rest-post' queries.
-   * In order to ensure that the message decoding is done right the user of the post query needs to specify the
-   * header.
-   * The Header needs to be 'Content-Type: text/plain' or 'text/json'.
-   * The safest way to use this post is to use the type 'plane'.
-   *
-   * In order to send the message itself the data must be specified in the body of the HTTP request.
-   *
-   * @param name The name of the DataTag to which this message belongs
-   * @param value Tha value of the message which need to be specified in the body.
-   * @return The status of the request. If the request was successful to the server the request will be HttpStatus.OK.
-   */
-  @RequestMapping(value = "/tags/{name}", method = RequestMethod.POST)
-  public HttpStatus postHandlerWithName(@PathVariable("name") String name, @RequestBody String value) {
+  @RequestMapping(value = "/tags/{identifier}", method = RequestMethod.POST)
+  public HttpStatus postHandler(@PathVariable("identifier") String identifier, @RequestBody String value) {
     Long tagId;
-    try{
-      tagId = postScheduler.getIdByName(name);
-    } catch (Exception e){
+
+    // Check if the incoming identifier is Long - if not we assume it is a string(name)
+    try {
+      tagId = Long.parseLong(identifier);
+
+      // Number caste failed: check DataTags for names
+    } catch (NumberFormatException e) {
+      tagId = postScheduler.getIdByName(identifier);
+
+    } catch (Exception e) {
+      log.warn("Unexpected Problem: Received a message with the identifier:" + identifier + ":", e);
       return HttpStatus.BAD_REQUEST;
     }
 

@@ -56,7 +56,7 @@ public abstract class RestScheduler {
   protected IEquipmentMessageSender equipmentMessageSender;
 
   /**
-   * Holds all configuration information of the given {@link EquipmentMessageHandler}.
+   * Holds all c2mon.client.startup.configuration information of the given {@link EquipmentMessageHandler}.
    */
   protected IEquipmentConfiguration equipmentConfiguration;
 
