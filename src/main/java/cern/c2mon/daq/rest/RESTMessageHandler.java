@@ -43,7 +43,7 @@ public class RESTMessageHandler extends EquipmentMessageHandler {
   private RequestDelegator requestDelegator;
 
   /** Spring boot context */
-  public ApplicationContext context ;
+  public ApplicationContext context;
 
 
   @Override
@@ -89,7 +89,7 @@ public class RESTMessageHandler extends EquipmentMessageHandler {
 
       } catch (IllegalArgumentException ex) {
 
-        equipmentLogger.warn("Problem caused by disconnecting: "+ ex.getMessage());
+        equipmentLogger.warn("Problem caused by disconnecting: " + ex.getMessage());
       }
     }
 
@@ -111,7 +111,7 @@ public class RESTMessageHandler extends EquipmentMessageHandler {
         equipmentLogger.warn("Problem causes by refreshing. Reason: " + ex.getMessage());
         getEquipmentMessageSender().sendInvalidTag(dataTag, SourceDataQuality.INCORRECT_NATIVE_ADDRESS, "Problem causes by refreshing. Reason: " + ex.getMessage());
 
-      } catch (RestClientException ex ){
+      } catch (RestClientException ex) {
 
         equipmentLogger.warn("Connection problem causes by refreshing:: " + ex.getMessage());
         getEquipmentMessageSender().sendInvalidTag(dataTag, SourceDataQuality.DATA_UNAVAILABLE, "Connection problem causes by refreshing:: " + ex.getMessage());
@@ -133,7 +133,7 @@ public class RESTMessageHandler extends EquipmentMessageHandler {
       equipmentLogger.warn("Problem causes by refreshing. Reason: " + ex.getMessage());
       getEquipmentMessageSender().sendInvalidTag(getEquipmentConfiguration().getSourceDataTag(dataTagId), SourceDataQuality.INCORRECT_NATIVE_ADDRESS, "Problem causes by refreshing. Reason: " + ex.getMessage());
 
-    } catch (RestClientException ex ){
+    } catch (RestClientException ex) {
 
       equipmentLogger.warn("Connection problem causes by refreshing:: " + ex.getMessage());
       getEquipmentMessageSender().sendInvalidTag(getEquipmentConfiguration().getSourceDataTag(dataTagId), SourceDataQuality.DATA_UNAVAILABLE, "Connection problem causes by refreshing:: " + ex.getMessage());

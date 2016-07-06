@@ -66,7 +66,8 @@ public class PostScheduler extends RestScheduler {
 
       } else {
 
-        equipmentMessageSender.sendInvalidTag(tag, SourceDataQuality.UNSUPPORTED_TYPE, "Message received for DataTag:" + id + " which DataType is not supported.");
+        equipmentMessageSender.sendInvalidTag(tag, SourceDataQuality.UNSUPPORTED_TYPE, "Message received for " +
+            "DataTag:" + id + " which DataType is not supported.");
         equipmentLogger.warn("Message received for DataTag:" + id + " which DataType is not supported.");
         return HttpStatus.BAD_REQUEST;
 
@@ -86,7 +87,8 @@ public class PostScheduler extends RestScheduler {
       return HttpStatus.OK;
     } else {
 
-      equipmentLogger.warn("DAQ " +equipmentConfiguration.getName()+" received a message with the id:" + id + ". This id is not supported from the DAQ.");
+      equipmentLogger.warn("DAQ " + equipmentConfiguration.getName() + " received a message with the id:" + id + ". " +
+          "This id is not supported from the DAQ.");
       return HttpStatus.BAD_REQUEST;
     }
   }
@@ -95,8 +97,9 @@ public class PostScheduler extends RestScheduler {
   public Long getIdByName(String name) {
     try {
       return equipmentConfiguration.getSourceDataTagIdByName(name);
-    } catch (IllegalArgumentException e){
-      equipmentLogger.warn("DAQ " +equipmentConfiguration.getName()+" received a message with the name:" + name+ ". This id is not supported from the DAQ.");
+    } catch (IllegalArgumentException e) {
+      equipmentLogger.warn("DAQ " + equipmentConfiguration.getName() + " received a message with the name:" + name +
+          ". This id is not supported from the DAQ.");
       throw e;
     }
   }
@@ -153,7 +156,8 @@ public class PostScheduler extends RestScheduler {
       ISourceDataTag sdt = equipmentConfiguration.getSourceDataTag(id);
 
       // sending the reply to the server
-      equipmentMessageSender.sendInvalidTag(sdt, SourceDataQuality.DATA_UNAVAILABLE, "No value received in the given time interval of the DataTag-" + id);
+      equipmentMessageSender.sendInvalidTag(sdt, SourceDataQuality.DATA_UNAVAILABLE, "No value received in the given " +
+          "time interval of the DataTag-" + id);
 
     }
   }

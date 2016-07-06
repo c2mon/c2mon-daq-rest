@@ -17,8 +17,8 @@
 package cern.c2mon.daq.rest.controller;
 
 import cern.c2mon.daq.rest.scheduling.PostScheduler;
-import cern.c2mon.shared.common.type.TypeConverter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -35,13 +35,13 @@ public class RestController {
   private PostScheduler postScheduler;
 
   /**
-   * The method receives 'rest-post' queries.
+   * This method receives HTTP POST requests
    * In order to ensure that the message decoding is done right the user of the post query needs to specify the
    * header.
    * The Header needs to be 'Content-Type: text/plain' or 'text/json'.
    * The safest way to use this post is to use the type 'plane'.
-   *
-   * In order to send the message itself the data must be specified in the body of the HTTP request.
+   * <p>
+   * In order to send a message the corresponding data must be specified in the body of the HTTP request.
    *
    * @param identifier The identifier of the tag. This can either be the name of the tag or the id.
    * @param value      Tha value of the message which need to be specified in the body.
@@ -52,13 +52,9 @@ public class RestController {
   public HttpStatus postHandler(@PathVariable("identifier") String identifier, @RequestBody String value) {
     Long tagId;
 
-    // Check if the incoming identifier is Long - if not we assume it is a string(name)
     try {
-      tagId = Long.parseLong(identifier);
-
-      // Number caste failed: check DataTags for names
-    } catch (NumberFormatException e) {
-      tagId = postScheduler.getIdByName(identifier);
+      // Check if the identifier is numeric. If nor request the id from the daq based on the name
+      tagId = StringUtils.isNumeric(identifier) ? Long.parseLong(identifier) : postScheduler.getIdByName(identifier);
 
     } catch (Exception e) {
       log.warn("Unexpected Problem: Received a message with the identifier:" + identifier + ":", e);
