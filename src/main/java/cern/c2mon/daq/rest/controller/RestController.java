@@ -48,6 +48,7 @@ public class RestController {
    * @return The status of the request. If the request was successful to the server the request will be HttpStatus.OK.
    */
   @RequestMapping(value = "/tags/{identifier}", method = RequestMethod.POST)
+  @ResponseBody
   public HttpStatus postHandler(@PathVariable("identifier") String identifier, @RequestBody String value) {
     Long tagId;
 
