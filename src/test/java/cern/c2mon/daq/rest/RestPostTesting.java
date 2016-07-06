@@ -81,7 +81,7 @@ public class RestPostTesting {
   }
 
   @After
-  public void afterTest(){
+  public void afterTest() {
     EasyMock.reset(equipmentConfiguration, sourceDataTag, equipmentMessageSender);
   }
 
@@ -97,7 +97,7 @@ public class RestPostTesting {
 
     HashMap<String, String> map = new HashMap<>();
     map.put("mode", "POST");
-    map.put("postFrequency", "10");
+    map.put("postFrequency", "5");
 
     RestPostAddress hardwareAddress = (RestPostAddress) RestAddressFactory.createHardwareAddress(map);
 
@@ -119,18 +119,70 @@ public class RestPostTesting {
     EasyMock.expect(sourceDataTag.getDataType()).andReturn("String");
     EasyMock.expect(sourceDataTag.getDataType()).andReturn("String");
 
-    EasyMock.expect(equipmentMessageSender.sendTagFiltered(isA(ISourceDataTag.class), isA(String.class), EasyMock.anyLong())).andReturn(true);
+    EasyMock.expect(equipmentMessageSender.sendTagFiltered(isA(ISourceDataTag.class), isA(String.class), EasyMock
+        .anyLong())).andReturn(true);
 
     EasyMock.replay(equipmentConfiguration, sourceDataTag, equipmentMessageSender);
 
 
     try {
       // let some time pass and send than a message to the server
-      Thread.sleep(10_000);
-      mockMvc.perform((post("/tags/1").contentType(MediaType.TEXT_PLAIN_VALUE).content("testText"))).andExpect(status().isOk());
+      Thread.sleep(5_000);
+      mockMvc.perform((post("/tags/1").contentType(MediaType.TEXT_PLAIN_VALUE).content("testText"))).andExpect(status
+          ().isOk());
 
-      // after additional 10 seconds there should not send a fault message because the last message should have reset the timer
-      Thread.sleep(10_000);
+      // after additional 10 seconds there should not send a fault message because the last message should have reset
+      // the timer
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    EasyMock.verify(equipmentConfiguration, sourceDataTag, equipmentMessageSender);
+  }
+
+  @Test
+  public void messageByNameReceivedInInterval() {
+    // setup
+    PostScheduler scheduler = new PostScheduler(equipmentMessageSender, equipmentConfiguration, equipmentLogger);
+    restController.setPostScheduler(scheduler);
+
+    HashMap<String, String> map = new HashMap<>();
+    map.put("mode", "POST");
+    map.put("postFrequency", "5");
+
+    RestPostAddress hardwareAddress = (RestPostAddress) RestAddressFactory.createHardwareAddress(map);
+
+    // mocks for setup
+    EasyMock.expect(equipmentConfiguration.getSourceDataTag(1L)).andReturn(sourceDataTag);
+    EasyMock.expect(sourceDataTag.getHardwareAddress()).andReturn(hardwareAddress);
+
+    EasyMock.replay(equipmentConfiguration, sourceDataTag);
+    scheduler.addTask(1L);
+    EasyMock.verify(equipmentConfiguration, sourceDataTag);
+    EasyMock.reset(equipmentConfiguration, sourceDataTag);
+
+    // mocks for mvc post
+    EasyMock.expect(equipmentConfiguration.getSourceDataTagIdByName("name")).andReturn(1L);
+
+    EasyMock.expect(equipmentConfiguration.getSourceDataTag(1L)).andReturn(sourceDataTag);
+    EasyMock.expect(equipmentConfiguration.getSourceDataTag(1L)).andReturn(sourceDataTag);
+    EasyMock.expect(sourceDataTag.getHardwareAddress()).andReturn(hardwareAddress);
+
+    EasyMock.expect(sourceDataTag.getDataType()).andReturn("String");
+    EasyMock.expect(sourceDataTag.getDataType()).andReturn("String");
+
+    EasyMock.expect(equipmentMessageSender.sendTagFiltered(isA(ISourceDataTag.class), isA(String.class), EasyMock
+        .anyLong())).andReturn(true);
+
+    EasyMock.replay(equipmentConfiguration, sourceDataTag, equipmentMessageSender);
+
+
+    try {
+      // let some time pass and send than a message to the server
+      Thread.sleep(5_000);
+      mockMvc.perform((post("/tags/name").contentType(MediaType.TEXT_PLAIN_VALUE).content("testText"))).andExpect(status
+          ().isOk());
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -166,7 +218,8 @@ public class RestPostTesting {
     // mocks for timeOut
     EasyMock.expect(equipmentConfiguration.getSourceDataTag(1L)).andReturn(sourceDataTag);
 
-    equipmentMessageSender.sendInvalidTag(sourceDataTag, SourceDataQuality.DATA_UNAVAILABLE, "No value received in the given time interval of the DataTag-1");
+    equipmentMessageSender.sendInvalidTag(sourceDataTag, SourceDataQuality.DATA_UNAVAILABLE, "No value received in " +
+        "the given time interval of the DataTag-1");
     expectLastCall().once();
 
     EasyMock.replay(equipmentConfiguration, sourceDataTag, equipmentMessageSender);
@@ -193,7 +246,7 @@ public class RestPostTesting {
 
     HashMap<String, String> map = new HashMap<>();
     map.put("mode", "POST");
-    map.put("postFrequency", "10");
+    map.put("postFrequency", "3");
 
     RestPostAddress hardwareAddress = (RestPostAddress) RestAddressFactory.createHardwareAddress(map);
 
@@ -210,13 +263,16 @@ public class RestPostTesting {
 
     try {
       // unknown url:
-      mockMvc.perform((post("wrong/1").contentType(MediaType.TEXT_PLAIN_VALUE).content("testText"))).andExpect(status().isNotFound());
+      mockMvc.perform((post("wrong/1").contentType(MediaType.TEXT_PLAIN_VALUE).content("testText"))).andExpect(status
+          ().isNotFound());
 
       // unknown method:
-      mockMvc.perform((post("/wrong/1").contentType(MediaType.TEXT_PLAIN_VALUE).content("testText"))).andExpect(status().isMethodNotAllowed());
+      mockMvc.perform((post("/wrong/1").contentType(MediaType.TEXT_PLAIN_VALUE).content("testText"))).andExpect
+          (status().isMethodNotAllowed());
 
       // missing PathVariable:
-      mockMvc.perform((post("/tags/").contentType(MediaType.TEXT_PLAIN_VALUE).content("testText"))).andExpect(status().isMethodNotAllowed());
+      mockMvc.perform((post("/tags/").contentType(MediaType.TEXT_PLAIN_VALUE).content("testText"))).andExpect(status
+          ().isMethodNotAllowed());
 
       // missing content:
       mockMvc.perform((post("/tags/1").contentType(MediaType.TEXT_PLAIN_VALUE))).andExpect(status().isBadRequest());
@@ -255,7 +311,8 @@ public class RestPostTesting {
     // mocks for timeOut
     EasyMock.expect(equipmentConfiguration.getSourceDataTag(1L)).andReturn(sourceDataTag);
 
-    equipmentMessageSender.sendInvalidTag(sourceDataTag, SourceDataQuality.DATA_UNAVAILABLE, "No value received in the given time interval of the DataTag-1");
+    equipmentMessageSender.sendInvalidTag(sourceDataTag, SourceDataQuality.DATA_UNAVAILABLE, "No value received in " +
+        "the given time interval of the DataTag-1");
     expectLastCall().once();
 
     // mocks for mvc post
@@ -267,14 +324,16 @@ public class RestPostTesting {
     EasyMock.expect(sourceDataTag.getDataType()).andReturn("String");
     EasyMock.expect(sourceDataTag.getDataType()).andReturn("String");
 
-    EasyMock.expect(equipmentMessageSender.sendTagFiltered(isA(ISourceDataTag.class), isA(String.class), EasyMock.anyLong())).andReturn(true);
+    EasyMock.expect(equipmentMessageSender.sendTagFiltered(isA(ISourceDataTag.class), isA(String.class), EasyMock
+        .anyLong())).andReturn(true);
 
     EasyMock.replay(equipmentConfiguration, sourceDataTag, equipmentMessageSender);
 
     try {
       // let some time pass and send than a message to the server
-      Thread.sleep(7_000);
-      mockMvc.perform((post("/tags/1").contentType(MediaType.TEXT_PLAIN_VALUE).content("testText"))).andExpect(status().isOk());
+      Thread.sleep(5_000);
+      mockMvc.perform((post("/tags/1").contentType(MediaType.TEXT_PLAIN_VALUE).content("testText"))).andExpect(status
+          ().isOk());
 
     } catch (Exception e) {
       e.printStackTrace();
