@@ -35,17 +35,22 @@ public class RestController {
   private PostScheduler postScheduler;
 
   /**
-   * This method receives HTTP POST requests
-   * In order to ensure that the message decoding is done right the user of the post query needs to specify the
-   * header.
-   * The Header needs to be 'Content-Type: text/plain' or 'text/json'.
-   * The safest way to use this post is to use the type 'plane'.
+   * This method receives HTTP POST requests. In order to ensure that the
+   * message decoding is done right the user of the post query needs to specify
+   * the header.
    * <p>
-   * In order to send a message the corresponding data must be specified in the body of the HTTP request.
+   * The header needs to be 'Content-Type: text/plain' or 'text/json'. The
+   * safest way to use this post is to use the type 'plain'.
+   * <p>
+   * In order to send a message the corresponding data must be specified in the
+   * body of the HTTP request.
    *
-   * @param identifier The identifier of the tag. This can either be the name of the tag or the id.
-   * @param value      Tha value of the message which need to be specified in the body.
-   * @return The status of the request. If the request was successful to the server the request will be HttpStatus.OK.
+   * @param identifier The identifier of the tag. This can either be the name
+   *                   of the tag or the id.
+   * @param value      The value of the message which need to be specified in
+   *                   the body.
+   * @return The status of the request. If the request was successful to the
+   * server the request will be HttpStatus.OK.
    */
   @RequestMapping(value = "/tags/{identifier}", method = RequestMethod.POST)
   @ResponseBody

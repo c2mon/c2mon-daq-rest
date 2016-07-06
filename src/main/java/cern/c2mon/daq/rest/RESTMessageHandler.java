@@ -1,16 +1,16 @@
 /******************************************************************************
  * Copyright (C) 2010-2016 CERN. All rights not expressly granted are reserved.
- * <p/>
+ *
  * This file is part of the CERN Control and Monitoring Platform 'C2MON'.
  * C2MON is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation, either version 3 of the license.
- * <p/>
+ *
  * C2MON is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
  * more details.
- * <p/>
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with C2MON. If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
@@ -28,9 +28,9 @@ import org.springframework.web.client.RestClientException;
 
 
 /**
- * Entry point of the REST module. The connectToDataSource() method is called at the DAQ startup phase.
- * It initializes the Spring boot context, which triggers
- * the tag subscriptions for all GET REST requests.
+ * Entry point of the REST module. The connectToDataSource() method is called
+ * at the DAQ startup phase. It initializes the Spring boot context, which
+ * triggers the tag subscriptions for all GET REST requests.
  *
  * @author Franz Ritter
  */
@@ -55,9 +55,11 @@ public class RESTMessageHandler extends EquipmentMessageHandler {
     this.equipmentLogger = getEquipmentLogger(RESTMessageHandler.class);
     equipmentLogger.trace("enter connectToDataSource()");
 
-    requestDelegator = new RequestDelegator(getEquipmentMessageSender(), getEquipmentConfiguration(), equipmentLogger, restController);
+    requestDelegator = new RequestDelegator(getEquipmentMessageSender(), getEquipmentConfiguration(),
+        equipmentLogger, restController);
 
-    IDataTagChanger dataTagChanger = new RESTDataTagChanger(getEquipmentMessageSender(), equipmentLogger, requestDelegator);
+    IDataTagChanger dataTagChanger = new RESTDataTagChanger(getEquipmentMessageSender(), equipmentLogger,
+        requestDelegator);
     getEquipmentConfigurationHandler().setDataTagChanger(dataTagChanger);
 
 
@@ -69,7 +71,8 @@ public class RESTMessageHandler extends EquipmentMessageHandler {
       } catch (IllegalArgumentException ex) {
 
         equipmentLogger.warn("DataTag " + dataTag.getId() + " not configurable - Reason: " + ex.getMessage());
-        getEquipmentMessageSender().sendInvalidTag(dataTag, SourceDataQuality.INCORRECT_NATIVE_ADDRESS, "DataTag " + dataTag.getId() + " not configurable - Reason: " + ex.getMessage());
+        getEquipmentMessageSender().sendInvalidTag(dataTag, SourceDataQuality.INCORRECT_NATIVE_ADDRESS, "DataTag " +
+            dataTag.getId() + " not configurable - Reason: " + ex.getMessage());
 
       }
     }
@@ -109,12 +112,14 @@ public class RESTMessageHandler extends EquipmentMessageHandler {
       } catch (IllegalArgumentException ex) {
 
         equipmentLogger.warn("Problem causes by refreshing. Reason: " + ex.getMessage());
-        getEquipmentMessageSender().sendInvalidTag(dataTag, SourceDataQuality.INCORRECT_NATIVE_ADDRESS, "Problem causes by refreshing. Reason: " + ex.getMessage());
+        getEquipmentMessageSender().sendInvalidTag(dataTag, SourceDataQuality.INCORRECT_NATIVE_ADDRESS, "Problem " +
+            "causes by refreshing. Reason: " + ex.getMessage());
 
       } catch (RestClientException ex) {
 
         equipmentLogger.warn("Connection problem causes by refreshing:: " + ex.getMessage());
-        getEquipmentMessageSender().sendInvalidTag(dataTag, SourceDataQuality.DATA_UNAVAILABLE, "Connection problem causes by refreshing:: " + ex.getMessage());
+        getEquipmentMessageSender().sendInvalidTag(dataTag, SourceDataQuality.DATA_UNAVAILABLE, "Connection problem " +
+            "causes by refreshing:: " + ex.getMessage());
       }
     }
 
@@ -131,12 +136,14 @@ public class RESTMessageHandler extends EquipmentMessageHandler {
     } catch (IllegalArgumentException ex) {
 
       equipmentLogger.warn("Problem causes by refreshing. Reason: " + ex.getMessage());
-      getEquipmentMessageSender().sendInvalidTag(getEquipmentConfiguration().getSourceDataTag(dataTagId), SourceDataQuality.INCORRECT_NATIVE_ADDRESS, "Problem causes by refreshing. Reason: " + ex.getMessage());
+      getEquipmentMessageSender().sendInvalidTag(getEquipmentConfiguration().getSourceDataTag(dataTagId),
+          SourceDataQuality.INCORRECT_NATIVE_ADDRESS, "Problem causes by refreshing. Reason: " + ex.getMessage());
 
     } catch (RestClientException ex) {
 
       equipmentLogger.warn("Connection problem causes by refreshing:: " + ex.getMessage());
-      getEquipmentMessageSender().sendInvalidTag(getEquipmentConfiguration().getSourceDataTag(dataTagId), SourceDataQuality.DATA_UNAVAILABLE, "Connection problem causes by refreshing:: " + ex.getMessage());
+      getEquipmentMessageSender().sendInvalidTag(getEquipmentConfiguration().getSourceDataTag(dataTagId),
+          SourceDataQuality.DATA_UNAVAILABLE, "Connection problem causes by refreshing:: " + ex.getMessage());
     }
 
     equipmentLogger.trace("Leaving refreshDataTag method.");

@@ -1,16 +1,16 @@
 /******************************************************************************
  * Copyright (C) 2010-2016 CERN. All rights not expressly granted are reserved.
- * <p/>
+ *
  * This file is part of the CERN Control and Monitoring Platform 'C2MON'.
  * C2MON is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation, either version 3 of the license.
- * <p/>
+ *
  * C2MON is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
  * more details.
- * <p/>
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with C2MON. If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
@@ -34,11 +34,10 @@ import java.util.TimerTask;
 
 
 /**
- * This class managed the Timer threads to for making requests to the Webservice.
- * It creates the timer and adds Task to the Timer which are making the request.
- * Besides creating the task this class also manges the deleting of obsolete tasks.
- * <p/>
- *
+ * This class managed the Timer threads to for making requests to the
+ * Webservice. It creates the timer and adds Task to the Timer which are making
+ * the request. Besides creating the task this class also manges the deleting
+ * of obsolete tasks.
  * @author Franz Ritter
  */
 public class GetScheduler extends RestScheduler {
@@ -77,7 +76,8 @@ public class GetScheduler extends RestScheduler {
   }
 
   /**
-   * A instance of the SendRequestTask holds all information for sending a GET request to a webservice.
+   * A instance of the SendRequestTask holds all information for sending a GET
+   * request to a webservice.
    */
   class SendRequestTask extends TimerTask {
 
@@ -94,10 +94,12 @@ public class GetScheduler extends RestScheduler {
     }
 
     /**
-     * Run method for the given Thread to make a get Request based on the given url to a web service.
-     * Since this thread is managed my a Timer the run method will be triggered in a given interval.
+     * Run method for the given Thread to make a get Request based on the given
+     * url to a web service. Since this thread is managed my a Timer the run
+     * method will be triggered in a given interval.
      * <p/>
-     * After receiving the message from the web service this method also sends the answer from service to the server.
+     * After receiving the message from the web service this method also sends
+     * the answer from service to the server.
      */
     @Override
     public void run() {

@@ -1,16 +1,16 @@
 /******************************************************************************
  * Copyright (C) 2010-2016 CERN. All rights not expressly granted are reserved.
- * <p/>
+ *
  * This file is part of the CERN Control and Monitoring Platform 'C2MON'.
  * C2MON is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation, either version 3 of the license.
- * <p/>
+ *
  * C2MON is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
  * more details.
- * <p/>
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with C2MON. If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
@@ -62,8 +62,10 @@ public class RESTDataTagChanger implements IDataTagChanger {
     } catch (IllegalArgumentException ex) {
 
       equipmentLogger.warn("DataTag " + sourceDataTag.getId() + " not configurable - Reason: " + ex.getMessage());
-      equipmentMessageSender.sendInvalidTag(sourceDataTag, SourceDataQuality.INCORRECT_NATIVE_ADDRESS, "DataTag " + sourceDataTag.getId() + " not configurable - Reason: " + ex.getMessage());
-      changeReport.appendError("DataTag " + sourceDataTag.getId() + " cant be add to the Equipment - Reason: " + ex.getMessage());
+      equipmentMessageSender.sendInvalidTag(sourceDataTag, SourceDataQuality.INCORRECT_NATIVE_ADDRESS, "DataTag " +
+          sourceDataTag.getId() + " not configurable - Reason: " + ex.getMessage());
+      changeReport.appendError("DataTag " + sourceDataTag.getId() + " cant be add to the Equipment - Reason: " + ex
+          .getMessage());
     }
 
     equipmentLogger.trace("Leaving onAddDataTag method.");
@@ -80,22 +82,26 @@ public class RESTDataTagChanger implements IDataTagChanger {
     } catch (IllegalArgumentException ex) {
 
       equipmentLogger.warn("Problem caused by removing of DataTag " + sourceDataTag.getId() + ": " + ex.getMessage());
-      changeReport.appendWarn("Problem caused by removing of the DataTag " + sourceDataTag.getId() + ": " + ex.getMessage());
+      changeReport.appendWarn("Problem caused by removing of the DataTag " + sourceDataTag.getId() + ": " + ex
+          .getMessage());
     }
 
     equipmentLogger.trace("Leaving onRemoveDataTag method.");
   }
 
   @Override
-  public void onUpdateDataTag(ISourceDataTag sourceDataTag, ISourceDataTag oldSourceDataTag, ChangeReport changeReport) {
+  public void onUpdateDataTag(ISourceDataTag sourceDataTag, ISourceDataTag oldSourceDataTag, ChangeReport
+      changeReport) {
 
     try {
 
       requestDelegator.updateDataTag(sourceDataTag, oldSourceDataTag);
 
     } catch (IllegalArgumentException ex) {
-      equipmentLogger.warn("Problem caused by updating of of DataTag " + sourceDataTag.getId() + ": " + ex.getMessage());
-      changeReport.appendError("Problem caused by updating of of DataTag " + sourceDataTag.getId() + ": " + ex.getMessage());
+      equipmentLogger.warn("Problem caused by updating of of DataTag " + sourceDataTag.getId() + ": " + ex.getMessage
+          ());
+      changeReport.appendError("Problem caused by updating of of DataTag " + sourceDataTag.getId() + ": " + ex
+          .getMessage());
     }
 
 

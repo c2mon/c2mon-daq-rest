@@ -1,16 +1,16 @@
 /******************************************************************************
  * Copyright (C) 2010-2016 CERN. All rights not expressly granted are reserved.
- * <p/>
+ *
  * This file is part of the CERN Control and Monitoring Platform 'C2MON'.
  * C2MON is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation, either version 3 of the license.
- * <p/>
+ *
  * C2MON is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
  * more details.
- * <p/>
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with C2MON. If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
@@ -38,13 +38,14 @@ public class PostScheduler extends RestScheduler {
   }
 
   /**
-   * If the Controller received successfully a message from a client this method handles
-   * all actions which needs to be done in that case.
-   * After receiving a message the ReceiverTask of the id must be restarted.
-   * Furthermore value must be cast to the given DataType of the corresponding DataTag.
+   * If the Controller received successfully a message from a client this
+   * method handles all actions which needs to be done in that case. After
+   * receiving a message the ReceiverTask of the id must be restarted.
+   * Furthermore value must be cast to the given DataType of the
+   * corresponding DataTag.
    * <p/>
-   * If this things are successful the scheduler sends the value to the server and gives
-   * a HttpStatus.OK return.
+   * If this things are successful the scheduler sends the value to the server
+   * and gives a HttpStatus.OK return.
    *
    * @param id    The id of the corresponding DataTag which this message belongs to.
    * @param value The Value for the DataTag
@@ -146,9 +147,10 @@ public class PostScheduler extends RestScheduler {
     }
 
     /**
-     * This method is called after the interval of this task expires.
-     * If the interval expire the client did not send a post message with the given id to the REST daq.
-     * Because of that the daq thinks that the data is invalid and an invalid message is end to the server.
+     * This method is called after the interval of this task expires. If the
+     * interval expire the client did not send a post message with the given
+     * id to the REST daq. Because of that the daq thinks that the data is
+     * invalid and an invalid message is end to the server.
      */
     @Override
     public void run() {

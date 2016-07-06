@@ -1,4 +1,4 @@
-/*
+/******************************************************************************
  * Copyright (C) 2010-2016 CERN. All rights not expressly granted are reserved.
  *
  * This file is part of the CERN Control and Monitoring Platform 'C2MON'.
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with C2MON. If not, see <http://www.gnu.org/licenses/>.
- */
+ *****************************************************************************/
 package cern.c2mon.daq.rest.address;
 
 import cern.c2mon.shared.common.datatag.SourceDataTag;
@@ -22,14 +22,18 @@ import cern.c2mon.shared.common.datatag.address.HardwareAddress;
 import java.util.Map;
 
 /**
- * This factory class is used to create HardwareAddress instances out of a Map<String, String>.
- * There are two kind of HardwareAddresses which can be created in this module:
+ * This factory class is used to create HardwareAddress instances out of a
+ * Map<String, String>. There are two kind of HardwareAddresses which can be
+ * created in this module:
  * <p/>
- * {@link RestGetAddress}: Pojo class which holds all information providing a GET functionality for a DataTag
+ * {@link RestGetAddress}: Pojo class which holds all information providing a
+ * GET functionality for a DataTag
  * <p/>
- * {@link RestPostAddress}: Pojo class which holds all information providing a POST functionality for a DataTag.
+ * {@link RestPostAddress}: Pojo class which holds all information providing a
+ * POST functionality for a DataTag.
  * <p/>
- * To determine which HardwareAddress should be created the map needs to set the entry 'mode' to 'POST' or 'GET'.
+ * To determine which HardwareAddress should be created the map needs to set
+ * the entry 'mode' to 'POST' or 'GET'.
  *
  * @author Franz Ritter
  */
@@ -48,16 +52,21 @@ public abstract class RestAddressFactory {
   /**
    * Factory method for creating a HardwareAddress out of a map.
    * The map holds all information for creating the object.
-   * There are two kind od HardwareAddresses which can be created out of the information of the map:
+   * There are two kind od HardwareAddresses which can be created out of the
+   * information of the map:
    * <p/>
-   * {@link RestGetAddress}: Pojo class which holds all infromation providing a GET functionality for a DataTag.
-   * Fields to set: (mode, GET), (url, "the url for the get request"), (getFrequency, "the request frequency"), (jsonPathExpression, "jsonPath expression for a json message")
+   * {@link RestGetAddress}: Pojo class which holds all infromation providing
+   * a GET functionality for a DataTag. Fields to set: (mode, GET), (url, "the
+   * url for the get request"), (getFrequency, "the request frequency"),
+   * (jsonPathExpression, "jsonPath expression for a json message")
    * <p/>
-   * {@link RestPostAddress}: Pojo class which holds all infromation providing a POST functionality for a DataTag.
-   * Fields to set: (mode, POST), (postFrequency, "the expected post frequency")
+   * {@link RestPostAddress}: Pojo class which holds all infromation providing
+   * a POST functionality for a DataTag. Fields to set: (mode, POST),
+   * (postFrequency, "the expected post frequency")
    * </p>
    *
-   * @param addressParameters A map which all infroation for creating the HardwareAddress
+   * @param addressParameters A map which all infroation for creating the
+   *                          HardwareAddress
    * @return The created HardwareAddress.
    */
   public static HardwareAddress createHardwareAddress(Map<String, String> addressParameters) {
@@ -103,7 +112,8 @@ public abstract class RestAddressFactory {
         value = RestMode.POST;
         break;
       default:
-        throw new IllegalArgumentException("HardwareAddress invalid. \"mode\" - " + properties.get("mode") + " unknown.");
+        throw new IllegalArgumentException("HardwareAddress invalid. \"mode\" - " + properties.get("mode") + " " +
+            "unknown.");
     }
 
     return value;
@@ -164,15 +174,16 @@ public abstract class RestAddressFactory {
     value = properties.get("postFrequency");
 
     if (value != null) {
-      return (int) (SourceDataTag.getAddressParameter(properties, "postFrequency", Integer.class) * POST_FREQUENCY_TOLERANCE) * 1000;
+      return (int) (SourceDataTag.getAddressParameter(properties, "postFrequency", Integer.class) *
+          POST_FREQUENCY_TOLERANCE) * 1000;
     } else {
       return null;
     }
   }
 
   /**
-   * Parses the pattern from the properties map.
-   * The pattern don't have to be specified and the method can return null without throwing an exception.
+   * Parses the pattern from the properties map. The pattern does not have to
+   * be specified and the method can return null without throwing an exception.
    *
    * @param properties the map which contains the url information.
    * @return The json expression for the value.
@@ -186,8 +197,6 @@ public abstract class RestAddressFactory {
     return value;
 
   }
-
-
 
 
 }
