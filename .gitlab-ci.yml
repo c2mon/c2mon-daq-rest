@@ -1,4 +1,13 @@
-image: maven:3.3-jdk-8
-
+# Fully build and deploy master branch
+build_and_deploy:
+  script: 
+    - mvn -q -U -B -T4 clean deploy --settings settings.xml
+  only:
+    - master
+    
+# Just run tests on feature branches
 build:
-  script: mvn -q -B -T4 clean package
+  script:
+    - mvn -q -B test -DskipDockerBuild -DskipDockerTag -Dmaven.test.skip=true
+  except:
+    - master

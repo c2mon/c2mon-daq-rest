@@ -4,43 +4,14 @@
 
   <parent>
     <groupId>cern.c2mon.daq</groupId>
-    <artifactId>c2mon-daq</artifactId>
+    <artifactId>c2mon-daq-parent</artifactId>
     <version>1.8.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>c2mon-daq-rest</artifactId>
+  <version>1.8.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <description>DAQ module for acquiring data via REST by either polling or exposing endpoints</description>
-
-  <distributionManagement>
-    <repository>
-      <id>artifactory</id>
-      <name>cs-ccr-ap1.cern.ch-releases</name>
-      <url>http://artifactory/beco-release-local</url>
-    </repository>
-    <snapshotRepository>
-      <id>artifactory</id>
-      <name>cs-ccr-ap1.cern.ch-snapshots</name>
-      <url>http://artifactory/beco-development-local</url>
-    </snapshotRepository>
-  </distributionManagement>
-
-  <repositories>
-    <repository>
-      <id>artifactory-releases</id>
-      <url>http://artifactory/release</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>artifactory-snapshots</id>
-      <url>http://artifactory/development</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
 
   <scm>
     <url>https://gitlab.cern.ch/c2mon/c2mon-daq-testhandler</url>
@@ -107,6 +78,12 @@
 
   <build>
     <plugins>
+      <!-- Activate plugin configurations to build a tarball and a docker image -->
+      <plugin><artifactId>maven-dependency-plugin</artifactId></plugin>
+      <plugin><artifactId>maven-assembly-plugin</artifactId></plugin>
+      <!-- To ignore the Docker build run 'mvn package -DskipDockerBuild -DskipDockerTag' -->
+      <plugin><groupId>com.spotify</groupId><artifactId>docker-maven-plugin</artifactId></plugin>
+    
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -114,26 +91,6 @@
         <configuration>
           <argLine>-Dserver.port=8888</argLine>
         </configuration>
-      </plugin>
-
-      <!-- Generates general distribution tarball -->
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptors>
-            <descriptor>src/dist/assembly.xml</descriptor>
-          </descriptors>
-
-        </configuration>
-        <executions>
-          <execution>
-            <id>create-assembly-file</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
