@@ -16,9 +16,12 @@
  *****************************************************************************/
 package cern.c2mon.daq.rest;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.client.RestClientException;
+
 import cern.c2mon.daq.common.EquipmentMessageHandler;
 import cern.c2mon.daq.common.conf.equipment.IDataTagChanger;
-import cern.c2mon.daq.common.logger.EquipmentLogger;
 import cern.c2mon.daq.rest.controller.RestController;
 import cern.c2mon.daq.tools.equipmentexceptions.EqIOException;
 import cern.c2mon.shared.common.datatag.ISourceDataTag;
@@ -32,24 +35,23 @@ import org.springframework.web.client.RestClientException;
  *
  * @author Franz Ritter
  */
+@Slf4j
 public class RestMessageHandler extends EquipmentMessageHandler {
 
-  /** The equipment logger of this class */
-  private EquipmentLogger equipmentLogger;
-
-  /** The class which communicates with the rest service */
+  /**
+   * The class which communicates with the RestServices
+   */
   private RequestDelegator requestDelegator;
 
   @Override
   public void connectToDataSource() throws EqIOException {
-    this.equipmentLogger = getEquipmentLogger(RestMessageHandler.class);
+    // class initialization
     RestController restController = getContext().getBean(RestController.class);
-    equipmentLogger.trace("enter connectToDataSource()");
+    log.trace("enter connectToDataSource()");
 
-    requestDelegator = new RequestDelegator(getEquipmentMessageSender(), getEquipmentConfiguration(),
-        equipmentLogger, restController);
+    requestDelegator = new RequestDelegator(getEquipmentMessageSender(), getEquipmentConfiguration(), restController);
 
-    IDataTagChanger dataTagChanger = new RestDataTagChanger(getEquipmentMessageSender(), equipmentLogger,
+    IDataTagChanger dataTagChanger = new RestDataTagChanger(getEquipmentMessageSender(),
         requestDelegator);
     getEquipmentConfigurationHandler().setDataTagChanger(dataTagChanger);
 
@@ -58,86 +60,75 @@ public class RestMessageHandler extends EquipmentMessageHandler {
     for (ISourceDataTag dataTag : getEquipmentConfiguration().getSourceDataTags().values()) {
       try {
         requestDelegator.addDataTag(dataTag);
-
-      } catch (IllegalArgumentException ex) {
-
-        equipmentLogger.warn("DataTag " + dataTag.getId() + " not configurable - Reason: " + ex.getMessage());
+      }
+      catch (IllegalArgumentException ex) {
+        log.warn("DataTag " + dataTag.getId() + " not configurable - Reason: " + ex.getMessage());
         getEquipmentMessageSender().sendInvalidTag(dataTag, SourceDataQuality.INCORRECT_NATIVE_ADDRESS, "DataTag " +
-            dataTag.getId() + " not configurable - Reason: " + ex.getMessage());
-
+                dataTag.getId() + " not configurable - Reason: " + ex.getMessage());
       }
     }
 
     getEquipmentMessageSender().confirmEquipmentStateOK("successfully connected");
-    equipmentLogger.info("connectToDataSource succeeded");
+    log.info("connectToDataSource succeeded");
   }
 
   @Override
   public void disconnectFromDataSource() throws EqIOException {
-    equipmentLogger.trace("Entering disconnectFromDataSource method.");
+    log.trace("Entering disconnectFromDataSource method.");
 
     for (ISourceDataTag dataTag : getEquipmentConfiguration().getSourceDataTags().values()) {
       try {
-
         requestDelegator.removeDataTag(dataTag);
-
-      } catch (IllegalArgumentException ex) {
-
-        equipmentLogger.warn("Problem caused by disconnecting: " + ex.getMessage());
+      }
+      catch (IllegalArgumentException ex) {
+        log.warn("Problem caused by disconnecting: " + ex.getMessage());
       }
     }
 
-    equipmentLogger.info("Equipment disconnected.");
-    equipmentLogger.trace("Leaving disconnectFromDataSource method.");
+    log.info("Equipment disconnected.");
+    log.trace("Leaving disconnectFromDataSource method.");
   }
 
   @Override
   public void refreshAllDataTags() {
-    equipmentLogger.trace("Entering refreshAllDataTags method.");
+    log.trace("Entering refreshAllDataTags method.");
 
     for (ISourceDataTag dataTag : getEquipmentConfiguration().getSourceDataTags().values()) {
       try {
-
         requestDelegator.refreshDataTag(dataTag.getId());
-
-      } catch (IllegalArgumentException ex) {
-
-        equipmentLogger.warn("Problem causes by refreshing. Reason: " + ex.getMessage());
+      }
+      catch (IllegalArgumentException ex) {
+        log.warn("Problem causes by refreshing. Reason: " + ex.getMessage());
         getEquipmentMessageSender().sendInvalidTag(dataTag, SourceDataQuality.INCORRECT_NATIVE_ADDRESS, "Problem " +
-            "causes by refreshing. Reason: " + ex.getMessage());
-
-      } catch (RestClientException ex) {
-
-        equipmentLogger.warn("Connection problem causes by refreshing:: " + ex.getMessage());
+                "causes by refreshing. Reason: " + ex.getMessage());
+      }
+      catch (RestClientException ex) {
+        log.warn("Connection problem causes by refreshing:: " + ex.getMessage());
         getEquipmentMessageSender().sendInvalidTag(dataTag, SourceDataQuality.DATA_UNAVAILABLE, "Connection problem " +
-            "causes by refreshing:: " + ex.getMessage());
+                "causes by refreshing:: " + ex.getMessage());
       }
     }
 
-    equipmentLogger.trace("Leaving refreshAllDataTags method.");
+    log.trace("Leaving refreshAllDataTags method.");
   }
 
   @Override
   public void refreshDataTag(long dataTagId) {
-    equipmentLogger.trace("Entering refreshDataTag method.");
+    log.trace("Entering refreshDataTag method.");
     try {
-
       requestDelegator.refreshDataTag(dataTagId);
-
-    } catch (IllegalArgumentException ex) {
-
-      equipmentLogger.warn("Problem causes by refreshing. Reason: " + ex.getMessage());
+    }
+    catch (IllegalArgumentException ex) {
+      log.warn("Problem causes by refreshing. Reason: " + ex.getMessage());
       getEquipmentMessageSender().sendInvalidTag(getEquipmentConfiguration().getSourceDataTag(dataTagId),
-          SourceDataQuality.INCORRECT_NATIVE_ADDRESS, "Problem causes by refreshing. Reason: " + ex.getMessage());
-
-    } catch (RestClientException ex) {
-
-      equipmentLogger.warn("Connection problem causes by refreshing:: " + ex.getMessage());
+              SourceDataQuality.INCORRECT_NATIVE_ADDRESS, "Problem causes by refreshing. Reason: " + ex.getMessage());
+    }
+    catch (RestClientException ex) {
+      log.warn("Connection problem causes by refreshing:: " + ex.getMessage());
       getEquipmentMessageSender().sendInvalidTag(getEquipmentConfiguration().getSourceDataTag(dataTagId),
-          SourceDataQuality.DATA_UNAVAILABLE, "Connection problem causes by refreshing:: " + ex.getMessage());
+              SourceDataQuality.DATA_UNAVAILABLE, "Connection problem causes by refreshing:: " + ex.getMessage());
     }
 
-    equipmentLogger.trace("Leaving refreshDataTag method.");
+    log.trace("Leaving refreshDataTag method.");
   }
-
 }

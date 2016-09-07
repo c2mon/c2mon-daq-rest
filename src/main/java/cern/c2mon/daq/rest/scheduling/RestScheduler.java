@@ -16,16 +16,14 @@
  *****************************************************************************/
 package cern.c2mon.daq.rest.scheduling;
 
-import cern.c2mon.daq.common.EquipmentMessageHandler;
-import cern.c2mon.daq.common.IEquipmentMessageSender;
-import cern.c2mon.daq.common.logger.EquipmentLogger;
-import cern.c2mon.shared.common.process.IEquipmentConfiguration;
-import org.springframework.scheduling.annotation.Scheduled;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import cern.c2mon.daq.common.EquipmentMessageHandler;
+import cern.c2mon.daq.common.IEquipmentMessageSender;
+import cern.c2mon.shared.common.process.IEquipmentConfiguration;
 
 /**
  * This class holds the basic functionality for all scheduler in this Daq.
@@ -60,16 +58,9 @@ public abstract class RestScheduler {
    */
   protected IEquipmentConfiguration equipmentConfiguration;
 
-  /**
-   * Logger class of the {@link EquipmentMessageHandler} for dealing with logging.
-   */
-  protected EquipmentLogger equipmentLogger;
-
-  protected RestScheduler(IEquipmentMessageSender sender, IEquipmentConfiguration configuration, EquipmentLogger
-      logger) {
+  protected RestScheduler(IEquipmentMessageSender sender, IEquipmentConfiguration configuration) {
     this.equipmentMessageSender = sender;
     this.equipmentConfiguration = configuration;
-    this.equipmentLogger = logger;
     this.timer = new Timer();
     this.idToTask = new HashMap<>();
   }
@@ -101,7 +92,8 @@ public abstract class RestScheduler {
       idToTask.remove(id);
       timer.purge();
 
-    } else {
+    }
+    else {
       throw new IllegalArgumentException("Cant remove DataTag:" + id + ". Tag unknown to the Equipment.");
     }
   }
@@ -110,6 +102,7 @@ public abstract class RestScheduler {
    * Checks if the DataTag corresponding to the given id is known to the scheduler.
    *
    * @param id The id of the corresponding DataTag.
+   *
    * @return
    */
   public boolean contains(Long id) {

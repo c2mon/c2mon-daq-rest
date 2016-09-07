@@ -16,19 +16,18 @@
  *****************************************************************************/
 package cern.c2mon.daq.rest.scheduling;
 
+import java.util.TimerTask;
+
+import com.jayway.jsonpath.JsonPath;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.client.RestClientException;
+
 import cern.c2mon.daq.common.IEquipmentMessageSender;
-import cern.c2mon.daq.common.logger.EquipmentLogger;
 import cern.c2mon.daq.rest.address.RestGetAddress;
 import cern.c2mon.daq.rest.webaccess.RESTConnector;
 import cern.c2mon.shared.common.datatag.*;
 import cern.c2mon.shared.common.process.IEquipmentConfiguration;
 import cern.c2mon.shared.common.type.TypeConverter;
-import com.jayway.jsonpath.JsonPath;
-import org.springframework.web.client.RestClientException;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.TimerTask;
 
 
 /**
@@ -39,10 +38,11 @@ import java.util.TimerTask;
  *
  * @author Franz Ritter
  */
+@Slf4j
 public class GetScheduler extends RestScheduler {
 
-  public GetScheduler(IEquipmentMessageSender sender, IEquipmentConfiguration configuration, EquipmentLogger logger) {
-    super(sender, configuration, logger);
+  public GetScheduler(IEquipmentMessageSender sender, IEquipmentConfiguration configuration) {
+    super(sender, configuration);
   }
 
   @Override
@@ -111,7 +111,8 @@ public class GetScheduler extends RestScheduler {
         // convert Message if jsonPathExpression is given
         if (jsonPathExpression != null) {
           serverMessage = JsonPath.parse(restMessage).read(jsonPathExpression, dataType);
-        } else {
+        }
+        else {
           serverMessage = restMessage;
         }
 
@@ -122,7 +123,7 @@ public class GetScheduler extends RestScheduler {
         SourceDataTagQuality tagQuality = new SourceDataTagQuality(SourceDataTagQualityCode.DATA_UNAVAILABLE);
         tagQuality.setDescription("Problem occurred at the REST get-operation (with the tag " + id + ") : "
             + e.getMessage());
-        equipmentLogger.warn("Problem occurred at the REST get-operation: " + e.getMessage());
+        log.warn("Problem occurred at the REST get-operation: " + e.getMessage());
         equipmentMessageSender.update(id, tagQuality);
 
       }

@@ -18,11 +18,10 @@ package cern.c2mon.daq.rest;
 
 import cern.c2mon.daq.common.IEquipmentMessageSender;
 import cern.c2mon.daq.common.conf.equipment.IDataTagChanger;
-import cern.c2mon.daq.common.logger.EquipmentLogger;
-import cern.c2mon.daq.rest.controller.RestController;
-import cern.c2mon.daq.rest.address.RestGetAddress;
 import cern.c2mon.daq.rest.address.RestAddressFactory;
+import cern.c2mon.daq.rest.address.RestGetAddress;
 import cern.c2mon.daq.rest.address.RestPostAddress;
+import cern.c2mon.daq.rest.controller.RestController;
 import cern.c2mon.daq.rest.scheduling.GetScheduler;
 import cern.c2mon.daq.rest.scheduling.PostScheduler;
 import cern.c2mon.daq.rest.scheduling.RestScheduler;
@@ -55,12 +54,11 @@ public class RequestDelegator {
 
   private PostScheduler postScheduler;
 
-  public RequestDelegator(IEquipmentMessageSender sender, IEquipmentConfiguration configuration, EquipmentLogger
-      logger, RestController controller) {
+  public RequestDelegator(IEquipmentMessageSender sender, IEquipmentConfiguration configuration, RestController controller) {
 
     this.equipmentConfiguration = configuration;
-    this.getScheduler = new GetScheduler(sender, configuration, logger);
-    this.postScheduler = new PostScheduler(sender, configuration, logger);
+    this.getScheduler = new GetScheduler(sender, configuration);
+    this.postScheduler = new PostScheduler(sender, configuration);
 
     // add the Scheduler to the controller
     controller.setPostScheduler(postScheduler);
@@ -88,9 +86,10 @@ public class RequestDelegator {
       RestScheduler scheduler = getScheduler(hardwareAddress);
       scheduler.addTask(sourceDataTag.getId());
 
-    } else {
+    }
+    else {
       throw new IllegalArgumentException("Cant add DataTag to the DAQ without HardwareAddress information - " +
-          "addressParameters are null.");
+              "addressParameters are null.");
     }
 
   }
@@ -134,9 +133,10 @@ public class RequestDelegator {
       scheduler.addTask(tagId);
 
 
-    } else {
+    }
+    else {
       throw new UnsupportedOperationException("DataTag " + sourceDataTag.getId() + " needs first to be initialized " +
-          "with a HardwareAddress before the update method gets called");
+              "with a HardwareAddress before the update method gets called");
     }
 
   }
@@ -160,6 +160,7 @@ public class RequestDelegator {
    * HelperMethod to determine which Scheduler is used for the given HardwareAddress.
    *
    * @param hardwareAddress The HardwareAddress with the information of the DataTag.
+   *
    * @return The Scheduler which belongs to the address.
    */
   private RestScheduler getScheduler(HardwareAddress hardwareAddress) {
@@ -171,12 +172,14 @@ public class RequestDelegator {
     if (hardwareAddress instanceof RestGetAddress) {
       return this.getScheduler;
 
-    } else if (hardwareAddress instanceof RestPostAddress) {
+    }
+    else if (hardwareAddress instanceof RestPostAddress) {
       return this.postScheduler;
 
-    } else {
+    }
+    else {
       throw new IllegalArgumentException("The HardwareAddress::" + hardwareAddress + " is not supported by the " +
-          "RestDaq.");
+              "RestDaq.");
     }
   }
 

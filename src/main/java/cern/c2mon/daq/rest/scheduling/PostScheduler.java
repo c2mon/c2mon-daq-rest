@@ -16,24 +16,25 @@
  *****************************************************************************/
 package cern.c2mon.daq.rest.scheduling;
 
+import java.util.TimerTask;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+
 import cern.c2mon.daq.common.IEquipmentMessageSender;
-import cern.c2mon.daq.common.logger.EquipmentLogger;
 import cern.c2mon.daq.rest.address.RestPostAddress;
 import cern.c2mon.shared.common.datatag.*;
 import cern.c2mon.shared.common.process.IEquipmentConfiguration;
 import cern.c2mon.shared.common.type.TypeConverter;
-import org.springframework.http.HttpStatus;
-
-import java.util.TimerTask;
 
 /**
  * @author Franz Ritter
  */
+@Slf4j
 public class PostScheduler extends RestScheduler {
 
-
-  public PostScheduler(IEquipmentMessageSender sender, IEquipmentConfiguration configuration, EquipmentLogger logger) {
-    super(sender, configuration, logger);
+  public PostScheduler(IEquipmentMessageSender sender, IEquipmentConfiguration configuration) {
+    super(sender, configuration);
   }
 
   /**
@@ -48,13 +49,12 @@ public class PostScheduler extends RestScheduler {
    *
    * @param id    The id of the corresponding DataTag which this message belongs to.
    * @param value The Value for the DataTag
+   *
    * @return Status based on the success of the processing of the value.
    */
   public HttpStatus sendValueToServer(Long id, Object value) {
-
     // send message if the id is known to the server(and daq)
     if (this.contains(id)) {
-
       ISourceDataTag tag = equipmentConfiguration.getSourceDataTag(id);
       RestPostAddress address = getAddress(id);
       ReceiverTask newTask = new ReceiverTask(id);
@@ -65,9 +65,8 @@ public class PostScheduler extends RestScheduler {
 
       } else {
         equipmentMessageSender.update(id, new SourceDataTagQuality(SourceDataTagQualityCode.UNSUPPORTED_TYPE));
-        equipmentLogger.warn("Message received for DataTag:" + id + " which DataType is not supported.");
+        log.warn("Message received for DataTag:" + id + " which DataType is not supported.");
         return HttpStatus.BAD_REQUEST;
-
       }
 
       // reset the timer for the tag
@@ -75,36 +74,34 @@ public class PostScheduler extends RestScheduler {
         idToTask.put(id, newTask);
         timer.purge();
         timer.schedule(newTask, address.getFrequency());
-
-      } else if (address.getFrequency() != null) {
+      }
+      else if (address.getFrequency() != null) {
         idToTask.put(id, newTask);
         timer.schedule(newTask, address.getFrequency());
       }
 
       return HttpStatus.OK;
-    } else {
-
-      equipmentLogger.warn("DAQ " + equipmentConfiguration.getName() + " received a message with the id:" + id + ". " +
-          "This id is not supported from the DAQ.");
+    }
+    else {
+      log.warn("DAQ " + equipmentConfiguration.getName() + " received a message with the id:" + id + ". " +
+              "This id is not supported from the DAQ.");
       return HttpStatus.BAD_REQUEST;
     }
   }
 
-
   public Long getIdByName(String name) {
     try {
       return equipmentConfiguration.getSourceDataTagIdByName(name);
-    } catch (IllegalArgumentException e) {
-      equipmentLogger.warn("DAQ " + equipmentConfiguration.getName() + " received a message with the name:" + name +
-          ". This id is not supported from the DAQ.");
+    }
+    catch (IllegalArgumentException e) {
+      log.warn("DAQ " + equipmentConfiguration.getName() + " received a message with the name:" + name +
+              ". This id is not supported from the DAQ.");
       throw e;
     }
   }
 
-
   @Override
   public void addTask(Long id) {
-
     RestPostAddress address = getAddress(id);
     ReceiverTask task = new ReceiverTask(id);
 
@@ -121,10 +118,8 @@ public class PostScheduler extends RestScheduler {
    * Simply send the last received tag value again
    */
   public void refreshDataTag(Long id) {
-
     ISourceDataTag tag = equipmentConfiguration.getSourceDataTag(id);
     equipmentMessageSender.sendTagFiltered(tag, tag.getCurrentValue(), System.currentTimeMillis());
-
   }
 
   private RestPostAddress getAddress(Long id) {
@@ -156,5 +151,4 @@ public class PostScheduler extends RestScheduler {
       equipmentMessageSender.update(id, tagQuality);
     }
   }
-
 }

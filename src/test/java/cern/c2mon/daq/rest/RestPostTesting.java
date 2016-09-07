@@ -17,7 +17,6 @@ package cern.c2mon.daq.rest;
  *****************************************************************************/
 
 import cern.c2mon.daq.common.IEquipmentMessageSender;
-import cern.c2mon.daq.common.logger.EquipmentLogger;
 import cern.c2mon.daq.rest.config.WebConfigTest;
 import cern.c2mon.daq.rest.controller.RestController;
 import cern.c2mon.daq.rest.address.RestAddressFactory;
@@ -25,6 +24,9 @@ import cern.c2mon.daq.rest.address.RestPostAddress;
 import cern.c2mon.daq.rest.scheduling.PostScheduler;
 import cern.c2mon.shared.common.datatag.*;
 import cern.c2mon.shared.common.process.IEquipmentConfiguration;
+import java.util.HashMap;
+
+import lombok.extern.slf4j.Slf4j;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -38,7 +40,15 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.HashMap;
+import cern.c2mon.daq.common.IEquipmentMessageSender;
+import cern.c2mon.daq.rest.address.RestAddressFactory;
+import cern.c2mon.daq.rest.address.RestPostAddress;
+import cern.c2mon.daq.rest.config.WebConfigTest;
+import cern.c2mon.daq.rest.controller.RestController;
+import cern.c2mon.daq.rest.scheduling.PostScheduler;
+import cern.c2mon.shared.common.datatag.ISourceDataTag;
+import cern.c2mon.shared.common.datatag.SourceDataQuality;
+import cern.c2mon.shared.common.process.IEquipmentConfiguration;
 
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
@@ -52,6 +62,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = WebConfigTest.class)
 @WebAppConfiguration
+@Slf4j
 public class RestPostTesting {
 
   @Autowired
@@ -63,7 +74,6 @@ public class RestPostTesting {
 
   IEquipmentMessageSender equipmentMessageSender;
   IEquipmentConfiguration equipmentConfiguration;
-  EquipmentLogger equipmentLogger;
   ISourceDataTag sourceDataTag;
 
   MockMvc mockMvc;
@@ -75,8 +85,6 @@ public class RestPostTesting {
     equipmentMessageSender = EasyMock.createStrictMock(IEquipmentMessageSender.class);
     equipmentConfiguration = EasyMock.createStrictMock(IEquipmentConfiguration.class);
     sourceDataTag = EasyMock.createStrictMock(ISourceDataTag.class);
-//    equipmentLogger = EasyMock.createMock(EquipmentLogger.class);
-
   }
 
   @After
@@ -91,7 +99,7 @@ public class RestPostTesting {
   @Test
   public void messageReceivedInInterval() {
     // setup
-    PostScheduler scheduler = new PostScheduler(equipmentMessageSender, equipmentConfiguration, equipmentLogger);
+    PostScheduler scheduler = new PostScheduler(equipmentMessageSender, equipmentConfiguration);
     restController.setPostScheduler(scheduler);
 
     HashMap<String, String> map = new HashMap<>();
@@ -127,12 +135,12 @@ public class RestPostTesting {
       // let some time pass and send than a message to the server
       Thread.sleep(5_000);
       mockMvc.perform((post("/tags/1").contentType(MediaType.TEXT_PLAIN_VALUE).content("testText"))).andExpect(status
-          ().isOk());
+              ().isOk());
 
       // after additional 10 seconds there should not send a fault message because the last message should have reset
       // the timer
-
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
     }
 
@@ -142,7 +150,7 @@ public class RestPostTesting {
   @Test
   public void messageByNameReceivedInInterval() {
     // setup
-    PostScheduler scheduler = new PostScheduler(equipmentMessageSender, equipmentConfiguration, equipmentLogger);
+    PostScheduler scheduler = new PostScheduler(equipmentMessageSender, equipmentConfiguration);
     restController.setPostScheduler(scheduler);
 
     HashMap<String, String> map = new HashMap<>();
@@ -179,9 +187,10 @@ public class RestPostTesting {
       // let some time pass and send than a message to the server
       Thread.sleep(5_000);
       mockMvc.perform((post("/tags/name").contentType(MediaType.TEXT_PLAIN_VALUE).content("testText"))).andExpect(status
-          ().isOk());
+              ().isOk());
 
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
     }
 
@@ -194,7 +203,7 @@ public class RestPostTesting {
   @Test
   public void messageNotReceivedInInterval() {
     // setup
-    PostScheduler scheduler = new PostScheduler(equipmentMessageSender, equipmentConfiguration, equipmentLogger);
+    PostScheduler scheduler = new PostScheduler(equipmentMessageSender, equipmentConfiguration);
     restController.setPostScheduler(scheduler);
 
     HashMap<String, String> map = new HashMap<>();
@@ -224,7 +233,8 @@ public class RestPostTesting {
       // let some time pass and send than a message to the server
       Thread.sleep(7_000);
 
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
     }
 
@@ -237,7 +247,7 @@ public class RestPostTesting {
   @Test
   public void wrongMessageReceived() {
     // setup
-    PostScheduler scheduler = new PostScheduler(equipmentMessageSender, equipmentConfiguration, equipmentLogger);
+    PostScheduler scheduler = new PostScheduler(equipmentMessageSender, equipmentConfiguration);
     restController.setPostScheduler(scheduler);
 
     HashMap<String, String> map = new HashMap<>();
@@ -260,20 +270,21 @@ public class RestPostTesting {
     try {
       // unknown url:
       mockMvc.perform((post("wrong/1").contentType(MediaType.TEXT_PLAIN_VALUE).content("testText"))).andExpect(status
-          ().isNotFound());
+              ().isNotFound());
 
       // unknown method:
       mockMvc.perform((post("/wrong/1").contentType(MediaType.TEXT_PLAIN_VALUE).content("testText"))).andExpect
-          (status().isMethodNotAllowed());
+              (status().isMethodNotAllowed());
 
       // missing PathVariable:
       mockMvc.perform((post("/tags/").contentType(MediaType.TEXT_PLAIN_VALUE).content("testText"))).andExpect(status
-          ().isMethodNotAllowed());
+              ().isMethodNotAllowed());
 
       // missing content:
       mockMvc.perform((post("/tags/1").contentType(MediaType.TEXT_PLAIN_VALUE))).andExpect(status().isBadRequest());
 
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
     }
 
@@ -286,7 +297,7 @@ public class RestPostTesting {
   @Test
   public void messageReceivedAfterInterval() {
     // setup
-    PostScheduler scheduler = new PostScheduler(equipmentMessageSender, equipmentConfiguration, equipmentLogger);
+    PostScheduler scheduler = new PostScheduler(equipmentMessageSender, equipmentConfiguration);
     restController.setPostScheduler(scheduler);
 
     HashMap<String, String> map = new HashMap<>();
@@ -328,9 +339,10 @@ public class RestPostTesting {
       // let some time pass and send than a message to the server
       Thread.sleep(5_000);
       mockMvc.perform((post("/tags/1").contentType(MediaType.TEXT_PLAIN_VALUE).content("testText"))).andExpect(status
-          ().isOk());
+              ().isOk());
 
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
     }
 

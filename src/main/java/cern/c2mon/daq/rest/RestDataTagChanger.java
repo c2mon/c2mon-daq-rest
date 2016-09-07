@@ -16,14 +16,13 @@
  *****************************************************************************/
 package cern.c2mon.daq.rest;
 
+import lombok.extern.slf4j.Slf4j;
+
 import cern.c2mon.daq.common.IEquipmentMessageSender;
 import cern.c2mon.daq.common.conf.equipment.IDataTagChanger;
-import cern.c2mon.daq.common.logger.EquipmentLogger;
 import cern.c2mon.shared.common.datatag.ISourceDataTag;
 import cern.c2mon.shared.common.datatag.SourceDataQuality;
 import cern.c2mon.shared.daq.config.ChangeReport;
-
-import static java.lang.String.format;
 
 /**
  * @author Franz Ritter
@@ -32,80 +31,66 @@ import static java.lang.String.format;
 /**
  * Handles the DataTagChange operations triggered by a new Configuration.
  */
+@Slf4j
 public class RestDataTagChanger implements IDataTagChanger {
-
-  /**
-   * The equipment logger of this class.
-   */
-  private EquipmentLogger equipmentLogger;
 
   private IEquipmentMessageSender equipmentMessageSender;
 
 
   private RequestDelegator requestDelegator;
 
-  public RestDataTagChanger(IEquipmentMessageSender sender, EquipmentLogger logger, RequestDelegator requestDelegator) {
+  public RestDataTagChanger(IEquipmentMessageSender sender, RequestDelegator requestDelegator) {
     this.equipmentMessageSender = sender;
-    this.equipmentLogger = logger;
     this.requestDelegator = requestDelegator;
   }
 
   @Override
   public void onAddDataTag(ISourceDataTag sourceDataTag, ChangeReport changeReport) {
-    equipmentLogger.trace("Entering onAddDataTag method.");
+    log.trace("Entering onAddDataTag method.");
 
     try {
-
       requestDelegator.addDataTag(sourceDataTag);
       changeReport.appendInfo("URL successful tested and added");
-
-    } catch (IllegalArgumentException ex) {
-
-      equipmentLogger.warn("DataTag " + sourceDataTag.getId() + " not configurable - Reason: " + ex.getMessage());
+    }
+    catch (IllegalArgumentException ex) {
+      log.warn("DataTag " + sourceDataTag.getId() + " not configurable - Reason: " + ex.getMessage());
       equipmentMessageSender.sendInvalidTag(sourceDataTag, SourceDataQuality.INCORRECT_NATIVE_ADDRESS, "DataTag " +
-          sourceDataTag.getId() + " not configurable - Reason: " + ex.getMessage());
+              sourceDataTag.getId() + " not configurable - Reason: " + ex.getMessage());
       changeReport.appendError("DataTag " + sourceDataTag.getId() + " cant be add to the Equipment - Reason: " + ex
-          .getMessage());
+              .getMessage());
     }
 
-    equipmentLogger.trace("Leaving onAddDataTag method.");
+    log.trace("Leaving onAddDataTag method.");
   }
 
   @Override
   public void onRemoveDataTag(ISourceDataTag sourceDataTag, ChangeReport changeReport) {
-    equipmentLogger.trace("Entering onRemoveDataTag method.");
+    log.trace("Entering onRemoveDataTag method.");
 
     try {
-
       requestDelegator.removeDataTag(sourceDataTag);
-
-    } catch (IllegalArgumentException ex) {
-
-      equipmentLogger.warn("Problem caused by removing of DataTag " + sourceDataTag.getId() + ": " + ex.getMessage());
+    }
+    catch (IllegalArgumentException ex) {
+      log.warn("Problem caused by removing of DataTag " + sourceDataTag.getId() + ": " + ex.getMessage());
       changeReport.appendWarn("Problem caused by removing of the DataTag " + sourceDataTag.getId() + ": " + ex
-          .getMessage());
+              .getMessage());
     }
 
-    equipmentLogger.trace("Leaving onRemoveDataTag method.");
+    log.trace("Leaving onRemoveDataTag method.");
   }
 
   @Override
   public void onUpdateDataTag(ISourceDataTag sourceDataTag, ISourceDataTag oldSourceDataTag, ChangeReport
-      changeReport) {
+          changeReport) {
 
     try {
-
       requestDelegator.updateDataTag(sourceDataTag, oldSourceDataTag);
-
-    } catch (IllegalArgumentException ex) {
-      equipmentLogger.warn("Problem caused by updating of of DataTag " + sourceDataTag.getId() + ": " + ex.getMessage
-          ());
-      changeReport.appendError("Problem caused by updating of of DataTag " + sourceDataTag.getId() + ": " + ex
-          .getMessage());
     }
-
-
+    catch (IllegalArgumentException ex) {
+      log.warn("Problem caused by updating of of DataTag " + sourceDataTag.getId() + ": " + ex.getMessage
+              ());
+      changeReport.appendError("Problem caused by updating of of DataTag " + sourceDataTag.getId() + ": " + ex
+              .getMessage());
+    }
   }
-
-
 }
