@@ -16,13 +16,6 @@ package cern.c2mon.daq.rest;
  * along with C2MON. If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
 
-import cern.c2mon.daq.rest.config.WebConfigTest;
-import cern.c2mon.daq.rest.webaccess.RESTConnector;
-import cern.c2mon.daq.test.GenericMessageHandlerTest;
-import cern.c2mon.daq.test.UseConf;
-import cern.c2mon.daq.test.UseHandler;
-import cern.c2mon.daq.tools.equipmentexceptions.EqIOException;
-import cern.c2mon.shared.common.datatag.SourceDataTagValue;
 import lombok.extern.slf4j.Slf4j;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
@@ -36,10 +29,21 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.client.MockRestServiceServer;
 
-import static org.easymock.EasyMock.*;
+import cern.c2mon.daq.rest.config.WebConfigTest;
+import cern.c2mon.daq.rest.webaccess.RESTConnector;
+import cern.c2mon.daq.test.GenericMessageHandlerTest;
+import cern.c2mon.daq.test.UseConf;
+import cern.c2mon.daq.test.UseHandler;
+import cern.c2mon.daq.tools.equipmentexceptions.EqIOException;
+import cern.c2mon.shared.common.datatag.SourceDataTagValue;
+
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
  * Created by fritter on 22/01/16.
@@ -82,10 +86,11 @@ public class RESTMessageHandlerTest extends GenericMessageHandlerTest {
   public void restGetCommFaultSuccessful() {
     // messageSender mock setup
     Capture<Long> id = new Capture<>();
+    Capture<String> tagName = new Capture<>();
     Capture<Boolean> val = new Capture<>();
     Capture<String> msg = new Capture<>();
 
-    messageSender.sendCommfaultTag(EasyMock.capture(id), EasyMock.capture(val), EasyMock.capture(msg));
+    messageSender.sendCommfaultTag(EasyMock.capture(id), EasyMock.capture(tagName), EasyMock.capture(val), EasyMock.capture(msg));
     expectLastCall().once();
 
     // record the mock
@@ -119,7 +124,7 @@ public class RESTMessageHandlerTest extends GenericMessageHandlerTest {
     // create junit captures for the tag id, value and message (for the commmfault tag)
     Capture<SourceDataTagValue> sdtv = new Capture<>();
 
-    messageSender.sendCommfaultTag(107211L, true, "setConnected - Accessed all web services");
+    messageSender.sendCommfaultTag(107211L, "E_REST_REST1:COMM_FAULT", true, "setConnected - Accessed all web services");
     expectLastCall().once();
     messageSender.addValue(EasyMock.capture(sdtv));
     expectLastCall().once();
@@ -155,7 +160,7 @@ public class RESTMessageHandlerTest extends GenericMessageHandlerTest {
     // create junit captures for the tag id, value and message (for the commmfault tag)
     Capture<SourceDataTagValue> sdtv = new Capture<>();
 
-    messageSender.sendCommfaultTag(107211L, true, "setConnected - Accessed all web services");
+    messageSender.sendCommfaultTag(107211L, "E_REST_REST1:COMM_FAULT",true, "setConnected - Accessed all web services");
     expectLastCall().once();
     messageSender.addValue(EasyMock.capture(sdtv));
     expectLastCall().once();
@@ -197,10 +202,11 @@ public class RESTMessageHandlerTest extends GenericMessageHandlerTest {
   public void restPostCommFaultSuccessful() {
     // messageSender mock setup
     Capture<Long> id = new Capture<>();
+    Capture<String> tagName = new Capture<>();
     Capture<Boolean> val = new Capture<>();
     Capture<String> msg = new Capture<>();
 
-    messageSender.sendCommfaultTag(EasyMock.capture(id), EasyMock.capture(val), EasyMock.capture(msg));
+    messageSender.sendCommfaultTag(EasyMock.capture(id), EasyMock.capture(tagName), EasyMock.capture(val), EasyMock.capture(msg));
     expectLastCall().once();
 
     // record the mock
