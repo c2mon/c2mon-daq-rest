@@ -95,5 +95,5 @@ curl -XPOST http://137.138.46.95:8080/tags/1003 -d '1337' -H 'Content-Type: text
 # Useful Links
 
 - https://github.com/jayway/JsonPath
-- http://c2mon.web.cern.ch/c2mon/docs/#_online_configuration_with_the_c2mon_configuration_api
+- [C2MON configuration API] (https://c2mon.web.cern.ch/c2mon/docs/latest/user-guide/client-api/configuration/#configuration-api)
 - https://curl.haxx.se/docs/manpage.html
