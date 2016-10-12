@@ -7,6 +7,10 @@ The REST DAQ allows the user to acquire data through REST requests. This module 
 
 # Configuration
 
+## Handler Class
+
+[cern.c2mon.daq.rest.RESTMessageHandler](https://gitlab.cern.ch/c2mon/c2mon-daq-rest/blob/master/src/main/java/cern/c2mon/daq/rest/RESTMessageHandler.java)
+
 ## Equipment Address
 
 No equipment address needs to be defined for the REST message handler. 
