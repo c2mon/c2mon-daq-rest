@@ -17,10 +17,10 @@ Each DataTag possess an address which is specified through a Map. Every map entr
 
 Furthermore the map can hold information for two kinds of addresses. The first is for the GET functionality the second is for the POST functionality.
 
-### GET Values:
+### GET Values
 
 | Key | Type | Mandatory? | Explanation |
-------------------------------------------
+| --- | ---- | ---------- | ----------- |
 | mode | 'GET' | Yes | Defines that this Address represents the GET modus |
 | url  | String | Yes | Defines the URL which provides a GET service |
 | getFrequency | Integer | No | Defines the frequency (in sec) in which the GET request gets triggered. If not set the default value of 30 sec will be applied. |
@@ -30,10 +30,10 @@ Furthermore the map can hold information for two kinds of addresses. The first i
 
  
 
-### POST Values:
+### POST Values
 
 | Key | Type | Mandatory? | Explanation |
-------------------------------------------
+| --- | ---- | ---------- | ----------- |
 | mode |'POST' | Yes | Defines that this HardwareAddress runs in POST modus |
 | postFrequency | Integer | No | Defines the time intervall (In sec) the DAQ expects an incoming POST message for the given Tag. In case the DAQ is not receiving a refresh it will invalidate the Tag. By default, no regular update is required. |
 
@@ -41,8 +41,9 @@ Furthermore the map can hold information for two kinds of addresses. The first i
 
 # Examples
 
-## Example for defining a DataTag with the GET Modus:
-```
+## Example for defining a DataTag with the GET Modus
+
+```java
 HashMap<String, String> tagAddressGET = new HashMap<>();
 tagAddressGET.put("mode", "GET");
 tagAddressGET.put("url", "http://jsonplaceholder.typicode.com/posts/2");
@@ -58,7 +59,8 @@ DataTag tagGET = DataTag.builder()
 ```
 
 ## Example for defining a DataTag with the POST Modus:
-```
+
+```java
 HashMap<String, String> tagAddressPOST = new HashMap<>();
 tagAddressPOST.put("mode", "POST");
 tagAddressPOST.put("postFrequency", "60");
@@ -85,7 +87,7 @@ If the client makes a post call he must define content type in the header of the
 The two recommended types to use are `text/plain` and `text/json`. If you define another type the service could decode the message in a wrong way.
 
 ### Example:
-```
+```bash
 curl -XPOST http://137.138.46.95:8080/tags/1003 -d '1337' -H 'Content-Type: text/plain'
 ```
 
