@@ -19,8 +19,7 @@ package cern.c2mon.daq.rest.scheduling;
 import cern.c2mon.daq.common.IEquipmentMessageSender;
 import cern.c2mon.daq.common.logger.EquipmentLogger;
 import cern.c2mon.daq.rest.address.RestPostAddress;
-import cern.c2mon.shared.common.datatag.ISourceDataTag;
-import cern.c2mon.shared.common.datatag.SourceDataQuality;
+import cern.c2mon.shared.common.datatag.*;
 import cern.c2mon.shared.common.process.IEquipmentConfiguration;
 import cern.c2mon.shared.common.type.TypeConverter;
 import org.springframework.http.HttpStatus;
@@ -61,14 +60,11 @@ public class PostScheduler extends RestScheduler {
       ReceiverTask newTask = new ReceiverTask(id);
 
       if (TypeConverter.isConvertible(value, tag.getDataType())) {
-
         Object message = TypeConverter.cast(value, tag.getDataType());
-        equipmentMessageSender.sendTagFiltered(tag, message, System.currentTimeMillis());
+        equipmentMessageSender.update(id, new ValueUpdate(message, System.currentTimeMillis()));
 
       } else {
-
-        equipmentMessageSender.sendInvalidTag(tag, SourceDataQuality.UNSUPPORTED_TYPE, "Message received for " +
-            "DataTag:" + id + " which DataType is not supported.");
+        equipmentMessageSender.update(id, new SourceDataTagQuality(SourceDataTagQualityCode.UNSUPPORTED_TYPE));
         equipmentLogger.warn("Message received for DataTag:" + id + " which DataType is not supported.");
         return HttpStatus.BAD_REQUEST;
 
@@ -154,13 +150,10 @@ public class PostScheduler extends RestScheduler {
      */
     @Override
     public void run() {
-
-      ISourceDataTag sdt = equipmentConfiguration.getSourceDataTag(id);
-
       // sending the reply to the server
-      equipmentMessageSender.sendInvalidTag(sdt, SourceDataQuality.DATA_UNAVAILABLE, "No value received in the given " +
-          "time interval of the DataTag-" + id);
-
+      SourceDataTagQuality tagQuality = new SourceDataTagQuality(SourceDataTagQualityCode.DATA_UNAVAILABLE);
+      tagQuality.setDescription("No value received in the given time interval of the DataTag-" + id);
+      equipmentMessageSender.update(id, tagQuality);
     }
   }
 

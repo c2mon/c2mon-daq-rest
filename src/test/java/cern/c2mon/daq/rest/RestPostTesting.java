@@ -23,8 +23,7 @@ import cern.c2mon.daq.rest.controller.RestController;
 import cern.c2mon.daq.rest.address.RestAddressFactory;
 import cern.c2mon.daq.rest.address.RestPostAddress;
 import cern.c2mon.daq.rest.scheduling.PostScheduler;
-import cern.c2mon.shared.common.datatag.ISourceDataTag;
-import cern.c2mon.shared.common.datatag.SourceDataQuality;
+import cern.c2mon.shared.common.datatag.*;
 import cern.c2mon.shared.common.process.IEquipmentConfiguration;
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -119,8 +118,7 @@ public class RestPostTesting {
     EasyMock.expect(sourceDataTag.getDataType()).andReturn("String");
     EasyMock.expect(sourceDataTag.getDataType()).andReturn("String");
 
-    EasyMock.expect(equipmentMessageSender.sendTagFiltered(isA(ISourceDataTag.class), isA(String.class), EasyMock
-        .anyLong())).andReturn(true);
+    EasyMock.expect(equipmentMessageSender.update(isA(Long.class), isA(ValueUpdate.class))).andReturn(true);
 
     EasyMock.replay(equipmentConfiguration, sourceDataTag, equipmentMessageSender);
 
@@ -172,8 +170,7 @@ public class RestPostTesting {
     EasyMock.expect(sourceDataTag.getDataType()).andReturn("String");
     EasyMock.expect(sourceDataTag.getDataType()).andReturn("String");
 
-    EasyMock.expect(equipmentMessageSender.sendTagFiltered(isA(ISourceDataTag.class), isA(String.class), EasyMock
-        .anyLong())).andReturn(true);
+    EasyMock.expect(equipmentMessageSender.update(isA(Long.class), isA(ValueUpdate.class))).andReturn(true);
 
     EasyMock.replay(equipmentConfiguration, sourceDataTag, equipmentMessageSender);
 
@@ -216,10 +213,9 @@ public class RestPostTesting {
     EasyMock.reset(equipmentConfiguration, sourceDataTag);
 
     // mocks for timeOut
-    EasyMock.expect(equipmentConfiguration.getSourceDataTag(1L)).andReturn(sourceDataTag);
-
-    equipmentMessageSender.sendInvalidTag(sourceDataTag, SourceDataQuality.DATA_UNAVAILABLE, "No value received in " +
-        "the given time interval of the DataTag-1");
+    SourceDataTagQuality tagQuality = new SourceDataTagQuality(SourceDataTagQualityCode.DATA_UNAVAILABLE);
+    tagQuality.setDescription("No value received in the given time interval of the DataTag-" + 1L);
+    equipmentMessageSender.update(1L,tagQuality);
     expectLastCall().once();
 
     EasyMock.replay(equipmentConfiguration, sourceDataTag, equipmentMessageSender);
@@ -309,10 +305,9 @@ public class RestPostTesting {
     EasyMock.reset(equipmentConfiguration, sourceDataTag);
 
     // mocks for timeOut
-    EasyMock.expect(equipmentConfiguration.getSourceDataTag(1L)).andReturn(sourceDataTag);
-
-    equipmentMessageSender.sendInvalidTag(sourceDataTag, SourceDataQuality.DATA_UNAVAILABLE, "No value received in " +
-        "the given time interval of the DataTag-1");
+    SourceDataTagQuality tagQuality = new SourceDataTagQuality(SourceDataTagQualityCode.DATA_UNAVAILABLE);
+    tagQuality.setDescription("No value received in the given time interval of the DataTag-" + 1L);
+    equipmentMessageSender.update(1L, tagQuality);
     expectLastCall().once();
 
     // mocks for mvc post
@@ -324,8 +319,8 @@ public class RestPostTesting {
     EasyMock.expect(sourceDataTag.getDataType()).andReturn("String");
     EasyMock.expect(sourceDataTag.getDataType()).andReturn("String");
 
-    EasyMock.expect(equipmentMessageSender.sendTagFiltered(isA(ISourceDataTag.class), isA(String.class), EasyMock
-        .anyLong())).andReturn(true);
+
+    EasyMock.expect(equipmentMessageSender.update(isA(Long.class), isA(ValueUpdate.class))).andReturn(true);
 
     EasyMock.replay(equipmentConfiguration, sourceDataTag, equipmentMessageSender);
 

@@ -20,9 +20,7 @@ import cern.c2mon.daq.common.IEquipmentMessageSender;
 import cern.c2mon.daq.common.logger.EquipmentLogger;
 import cern.c2mon.daq.rest.address.RestGetAddress;
 import cern.c2mon.daq.rest.webaccess.RESTConnector;
-import cern.c2mon.shared.common.datatag.ISourceDataTag;
-import cern.c2mon.shared.common.datatag.SourceDataQuality;
-import cern.c2mon.shared.common.datatag.SourceDataTag;
+import cern.c2mon.shared.common.datatag.*;
 import cern.c2mon.shared.common.process.IEquipmentConfiguration;
 import cern.c2mon.shared.common.type.TypeConverter;
 import com.jayway.jsonpath.JsonPath;
@@ -38,6 +36,7 @@ import java.util.TimerTask;
  * Webservice. It creates the timer and adds Task to the Timer which are making
  * the request. Besides creating the task this class also manges the deleting
  * of obsolete tasks.
+ *
  * @author Franz Ritter
  */
 public class GetScheduler extends RestScheduler {
@@ -48,21 +47,19 @@ public class GetScheduler extends RestScheduler {
 
   @Override
   public void addTask(Long id) {
-
     // create task
-    RestGetAddress hardwareAddress = (RestGetAddress) this.equipmentConfiguration.getSourceDataTag(id).getHardwareAddress();
+    RestGetAddress hardwareAddress = (RestGetAddress) this.equipmentConfiguration.getSourceDataTag(id)
+        .getHardwareAddress();
     SendRequestTask task = new SendRequestTask(hardwareAddress.getUrl(), id, hardwareAddress.getJsonPathExpression());
 
     //save the Task in map and add it to the timer
     idToTask.put(id, task);
 
     timer.schedule(task, hardwareAddress.getFrequency(), hardwareAddress.getFrequency());
-
   }
 
   @Override
   public void refreshDataTag(Long id) {
-
     // get information:
     ISourceDataTag dataTag = this.equipmentConfiguration.getSourceDataTag(id);
     RestGetAddress hardwareAddress = (RestGetAddress) dataTag.getHardwareAddress();
@@ -71,8 +68,7 @@ public class GetScheduler extends RestScheduler {
     String restMessage = RESTConnector.sendAndReceiveRequest(hardwareAddress.getUrl());
 
     // sending the reply to the server:
-    equipmentMessageSender.sendTagFiltered(dataTag, restMessage, System.currentTimeMillis());
-
+    equipmentMessageSender.update(id, new ValueUpdate(restMessage, System.currentTimeMillis()));
   }
 
   /**
@@ -120,11 +116,14 @@ public class GetScheduler extends RestScheduler {
         }
 
         // sending the reply to the server
-        equipmentMessageSender.sendTagFiltered(sdt, serverMessage, System.currentTimeMillis());
+        equipmentMessageSender.update(id, new ValueUpdate(serverMessage, System.currentTimeMillis()));
 
       } catch (RestClientException e) {
+        SourceDataTagQuality tagQuality = new SourceDataTagQuality(SourceDataTagQualityCode.DATA_UNAVAILABLE);
+        tagQuality.setDescription("Problem occurred at the REST get-operation (with the tag " + id + ") : "
+            + e.getMessage());
         equipmentLogger.warn("Problem occurred at the REST get-operation: " + e.getMessage());
-        equipmentMessageSender.sendInvalidTag(sdt, SourceDataQuality.DATA_UNAVAILABLE, "Problem occurred at the REST get-operation: " + e.getMessage());
+        equipmentMessageSender.update(id, tagQuality);
 
       }
 
