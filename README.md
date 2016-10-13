@@ -54,12 +54,7 @@ tagAddressGET.put("url", "http://jsonplaceholder.typicode.com/posts/2");
 tagAddressGET.put("getFrequency", "20");
 tagAddressGET.put("jsonPathExpression", "$.id");
  
-DataTag tagGET = DataTag.builder()
-    .id(1_001L)
-    .name("restGetTagPattern")
-    .description("rest GET data tag with a address and a jsonPath expression")
-    .dataType(DataType.LONG)
-    .address(new DataTagAddress(tagAddressGET)).build();
+DataTag tagGET = DataTag.create("restGetTagPattern", String.class, new DataTagAddress(tagAddressGET)).build();
 ```
 
 ## Example for defining a DataTag with the POST Modus:
@@ -69,12 +64,7 @@ HashMap<String, String> tagAddressPOST = new HashMap<>();
 tagAddressPOST.put("mode", "POST");
 tagAddressPOST.put("postFrequency", "60");
  
-DataTag tagPOST = DataTag.builder()
-    .id(1_002L)
-    .name("restPostTag")
-    .description("rest POST data tag")
-    .dataType(DataType.STRING)
-    .address(new DataTagAddress(tagAddressPOST)).build();
+DataTag tagPOST = DataTag.create("restPostTag", String.class, new DataTagAddress(tagAddressPOST)).build();
 ```
 
 
@@ -94,7 +84,14 @@ The two recommended types to use are `text/plain` and `text/json`. If you define
 ```bash
 curl -XPOST http://137.138.46.95:8080/tags/1003 -d '1337' -H 'Content-Type: text/plain'
 ```
+The example sends the value `1337` to the daq which has a tag with the id `1003` registered.
 
+
+```bash
+curl -XPOST http://137.138.46.95:8080/tags/restTag -d '1337' -H 'Content-Type: text/plain'
+```
+You also can send the value to the daq by defining the name of the corresponding tag. 
+In this example the name is `restTag`.
 
 # Useful Links
 
