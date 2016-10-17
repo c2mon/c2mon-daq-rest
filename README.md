@@ -1,97 +1,77 @@
 # Overview
 
-The REST DAQ allows the user to acquire data through REST requests. This module provide two ways to acquire the data.
+The REST DAQ allows the user to publish data through RESTful HTTP requests in two ways:
 
-- The first way is do define a GET URL which links to a restful web-service. The data which this service provides will than requests in a given frequency from the module.
-- The second way to acquire data is through the POST modus. If the POST modus is set, the module itself works as web-service which accept post requests.
+- Performing periodic GET requests to a pre-defined web service URL;
+- Exposing a REST endpoint which accepts POST requests.
 
-# Configuration
+# Periodic GET
 
-## Handler Class
-
-[cern.c2mon.daq.rest.RESTMessageHandler](https://gitlab.cern.ch/c2mon/c2mon-daq-rest/blob/master/src/main/java/cern/c2mon/daq/rest/RESTMessageHandler.java)
-
-## Equipment Address
-
-No equipment address needs to be defined for the REST message handler. 
-
-## DataTag Address
-
-Each DataTag possess an address which is specified through a Map. Every map entry is of the Type `<String, String>`.
-
-Furthermore the map can hold information for two kinds of addresses. The first is for the GET functionality the second is for the POST functionality.
-
-### GET Values
+The following table describes the key/value pairs that the `DataTagAddress` must contain for the REST DAQ to perform a periodic GET.
 
 | Key | Type | Mandatory? | Explanation |
 | --- | ---- | ---------- | ----------- |
-| mode | 'GET' | Yes | Defines that this Address represents the GET modus |
-| url  | String | Yes | Defines the URL which provides a GET service |
-| getFrequency | Integer | No | Defines the frequency (in sec) in which the GET request gets triggered. If not set the default value of 30 sec will be applied. |
-| jsonPathExpression | String | No | If the response of the GET request is an JSON object an expression can define which value of the JSON object shall be extracted |
+| mode | 'GET' | Yes | Selects periodic GET mode |
+| url  | String | Yes | URL of the endpoint to be requested |
+| getFrequency | Integer | No | Frequency (in seconds) in which the endpoint will be polled. If not set, defaults to 30 sec. |
+| jsonPathExpression | String | No | [JSON Path](https://github.com/jayway/JsonPath) expression pointing to a property to be extracted from the HTTP response |
 
-- If the GET modus is set in the Address the module will send a GET request in the given frequency to the defined URL.
+## Example configuration
 
- 
+```java
+HashMap<String, String> address = new HashMap<>();
+address.put("mode", "GET");
+address.put("url", "http://jsonplaceholder.typicode.com/posts/2");
+address.put("getFrequency", "20");
+address.put("jsonPathExpression", "$.id");
 
-### POST Values
+DataTag tag = DataTag.create("someUsefulTag", String.class, new DataTagAddress(address)).build();
+```
+
+
+# POST endpoint
+
+The following table describes the key/value pairs that the `DataTagAddress` must contain for the REST DAQ to expose a POST endpoint.
 
 | Key | Type | Mandatory? | Explanation |
 | --- | ---- | ---------- | ----------- |
-| mode |'POST' | Yes | Defines that this HardwareAddress runs in POST modus |
-| postFrequency | Integer | No | Defines the time intervall (In sec) the DAQ expects an incoming POST message for the given Tag. In case the DAQ is not receiving a refresh it will invalidate the Tag. By default, no regular update is required. |
+| mode |'POST' | Yes | Selects POST endpoint mode |
+| postFrequency | Integer | No | Expected update interval (in seconds). In case an update is not received within this interval, the tag will be invalidated.
+By default, no interval is specified. |
 
-- If the the POST modus is set in the Address the module will expect a POST request in the defined frequency. If no POST message arrives in the given frequency the DAQ will set the corresponding DataTag to invalid.
-
-# Examples
-
-## Example for defining a DataTag with the GET Modus
+## Example configuration
 
 ```java
-HashMap<String, String> tagAddressGET = new HashMap<>();
-tagAddressGET.put("mode", "GET");
-tagAddressGET.put("url", "http://jsonplaceholder.typicode.com/posts/2");
-tagAddressGET.put("getFrequency", "20");
-tagAddressGET.put("jsonPathExpression", "$.id");
- 
-DataTag tagGET = DataTag.create("restGetTagPattern", String.class, new DataTagAddress(tagAddressGET)).build();
+HashMap<String, String> address = new HashMap<>();
+address.put("mode", "POST");
+address.put("postFrequency", "60");
+
+DataTag tag = DataTag.create("myTagEndpoint", String.class, new DataTagAddress(address)).build();
 ```
 
-## Example for defining a DataTag with the POST Modus:
+## Example usage
 
-```java
-HashMap<String, String> tagAddressPOST = new HashMap<>();
-tagAddressPOST.put("mode", "POST");
-tagAddressPOST.put("postFrequency", "60");
- 
-DataTag tagPOST = DataTag.create("restPostTag", String.class, new DataTagAddress(tagAddressPOST)).build();
+The following example sends the value `1337` to the endpoint which has a tag with the id `1003` registered:
+
+```bash
+curl -XPOST http://localhost:8080/tags/1003 -d '1337' -H 'Content-Type: text/plain'
 ```
+
+The following example does the same, but references the tag by name instead:
+
+```bash
+curl -XPOST http://137.138.46.95:8080/tags/myTagEndpoint -d '1337' -H 'Content-Type: text/plain'
+```
+
+### Note
+
+The `Content-Type` header must be set correctly to ensure the POST body is decoded correctly. The two recommended types to use are `text/plain` and `text/json`.
 
 
 # Commands
 
 The REST DAQ does not support commands.
 
-
-# Special Behaviour
-
-## Making a POST request
-
-If the client makes a post call he must define content type in the header of the URI.
-The two recommended types to use are `text/plain` and `text/json`. If you define another type the service could decode the message in a wrong way.
-
-### Example:
-```bash
-curl -XPOST http://137.138.46.95:8080/tags/1003 -d '1337' -H 'Content-Type: text/plain'
-```
-The example sends the value `1337` to the daq which has a tag with the id `1003` registered.
-
-
-```bash
-curl -XPOST http://137.138.46.95:8080/tags/restTag -d '1337' -H 'Content-Type: text/plain'
-```
-You also can send the value to the daq by defining the name of the corresponding tag. 
-In this example the name is `restTag`.
 
 # Useful Links
 
