@@ -46,12 +46,12 @@
           <property name="c2mon.daq.deadband.dynamic.enabled" value="true"/>
           <env name="PROCESS_NAME" value="P_REST"/>
       </startscript>
-      <deployment installLocation="/opt/dmn2/dmn2-daq-rest"/>
+      <deployment installLocation="/opt/dmn2/dmn2-daq/dmn2-daq-rest"/>
     </application>
 
   <application name="dmn2-daq-rest-dev">
       <startscript name="DMN2-DAQ-REST-DEV"/>
-      <deployment installLocation="/opt/dmn2-daq-rest-dev">
+      <deployment installLocation="/opt/dmn2/dmn2-daq/dmn2-daq-rest-dev">
         <directory name="conf">
           <file name="daq.properties" source="~dmndev/c2mon/daq/daq.properties_1.8.1" mask="400"/>
         </directory>
@@ -60,7 +60,7 @@
 
     <application name="dmn2-daq-rest-pro">
       <startscript name="DMN2-DAQ-REST"/>
-      <deployment installLocation="/opt/dmn2-daq-rest">
+      <deployment installLocation="/opt/dmn2/dmn2-daq/dmn2-daq-rest">
         <directory name="conf">
           <file name="daq.properties" source="~diamonop/c2mon/daq/daq.properties_1.8.1" mask="400"/>
         </directory>
@@ -69,5 +69,4 @@
 
   </product>
 </products>
-
 
