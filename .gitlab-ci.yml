@@ -1,5 +1,5 @@
-# Fully build and deploy master branch
-build_and_deploy:
+# Fully build and publish master branch
+build_and_publish:
   script: 
     - mvn -q -U -B -T4 clean deploy --settings settings.xml
   only:
@@ -8,6 +8,6 @@ build_and_deploy:
 # Just run tests on feature branches
 build:
   script:
-    - mvn -q -B test -DskipDockerBuild -DskipDockerTag -Dmaven.test.skip=true
+    - mvn -q -U -B clean test -DskipDockerBuild -DskipDockerTag
   except:
     - master
