@@ -21,6 +21,9 @@ import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
@@ -54,10 +57,12 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = WebConfigTest.class)
 @WebAppConfiguration
-public class RESTMessageHandlerTest extends GenericMessageHandlerTest {
+public class RESTMessageHandlerTest extends GenericMessageHandlerTest implements ApplicationContextAware {
 
   // reference to the instance of the handler to test
   RESTMessageHandler theHandler;
+
+  ApplicationContext context;
 
   @Override
   protected void beforeTest() throws Exception {
@@ -65,6 +70,7 @@ public class RESTMessageHandlerTest extends GenericMessageHandlerTest {
 
     // cast the reference (declared in the parent class) to the expected type
     theHandler = (RESTMessageHandler) msgHandler;
+    theHandler.setContext(context);
 //    theHandler.setRequestDelegator(new RequestDelegator(theHandler.getEquipmentMessageSender(), theHandler.getEquipmentConfiguration(), theHandler.getEquipmentLogger(RESTMessageHandler.class), restController));
 
     log.info("leaving beforeTest()");
@@ -113,7 +119,7 @@ public class RESTMessageHandlerTest extends GenericMessageHandlerTest {
     // check commFault sending
     assertEquals(107211L, id.getValue().longValue());
     assertEquals(true, val.getValue());
-    assertEquals("setConnected - Accessed all web services", msg.getValue());
+    assertEquals("successfully connected", msg.getValue());
 
   }
 
@@ -124,7 +130,7 @@ public class RESTMessageHandlerTest extends GenericMessageHandlerTest {
     // create junit captures for the tag id, value and message (for the commmfault tag)
     Capture<SourceDataTagValue> sdtv = new Capture<>();
 
-    messageSender.sendCommfaultTag(107211L, "E_REST_REST1:COMM_FAULT", true, "setConnected - Accessed all web services");
+    messageSender.sendCommfaultTag(107211L, "E_REST_REST1:COMM_FAULT", true, "successfully connected");
     expectLastCall().once();
     messageSender.addValue(EasyMock.capture(sdtv));
     expectLastCall().once();
@@ -160,7 +166,7 @@ public class RESTMessageHandlerTest extends GenericMessageHandlerTest {
     // create junit captures for the tag id, value and message (for the commmfault tag)
     Capture<SourceDataTagValue> sdtv = new Capture<>();
 
-    messageSender.sendCommfaultTag(107211L, "E_REST_REST1:COMM_FAULT",true, "setConnected - Accessed all web services");
+    messageSender.sendCommfaultTag(107211L, "E_REST_REST1:COMM_FAULT",true, "successfully connected");
     expectLastCall().once();
     messageSender.addValue(EasyMock.capture(sdtv));
     expectLastCall().once();
@@ -222,7 +228,11 @@ public class RESTMessageHandlerTest extends GenericMessageHandlerTest {
     // check commFault sending
     assertEquals(107211L, id.getValue().longValue());
     assertEquals(true, val.getValue());
-    assertEquals("setConnected - Accessed all web services", msg.getValue());
+    assertEquals("successfully connected", msg.getValue());
   }
 
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.context = applicationContext;
+  }
 }

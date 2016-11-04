@@ -23,9 +23,7 @@ import cern.c2mon.daq.rest.controller.RestController;
 import cern.c2mon.daq.tools.equipmentexceptions.EqIOException;
 import cern.c2mon.shared.common.datatag.ISourceDataTag;
 import cern.c2mon.shared.common.datatag.SourceDataQuality;
-import org.springframework.context.ApplicationContext;
 import org.springframework.web.client.RestClientException;
-
 
 /**
  * Entry point of the REST module. The connectToDataSource() method is called
@@ -39,20 +37,13 @@ public class RESTMessageHandler extends EquipmentMessageHandler {
   /** The equipment logger of this class */
   private EquipmentLogger equipmentLogger;
 
-  /** The class which communicates with the RestServices */
+  /** The class which communicates with the rest service */
   private RequestDelegator requestDelegator;
-
-  /** Spring boot context */
-  public ApplicationContext context;
-
 
   @Override
   public void connectToDataSource() throws EqIOException {
-    // class initialization
-    this.context = ApplicationContextProvider.getApplicationContext();
-    RestController restController = context.getBean(RestController.class);
-
     this.equipmentLogger = getEquipmentLogger(RESTMessageHandler.class);
+    RestController restController = getContext().getBean(RestController.class);
     equipmentLogger.trace("enter connectToDataSource()");
 
     requestDelegator = new RequestDelegator(getEquipmentMessageSender(), getEquipmentConfiguration(),
@@ -77,8 +68,8 @@ public class RESTMessageHandler extends EquipmentMessageHandler {
       }
     }
 
-    getEquipmentMessageSender().confirmEquipmentStateOK("setConnected - Accessed all web services");
-    equipmentLogger.info("connectToDataSource succeed.");
+    getEquipmentMessageSender().confirmEquipmentStateOK("successfully connected");
+    equipmentLogger.info("connectToDataSource succeeded");
   }
 
   @Override
