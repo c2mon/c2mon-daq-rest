@@ -104,16 +104,20 @@ public abstract class RestAddressFactory {
 
     RestMode value;
 
-    switch (properties.get("mode").toUpperCase()) {
-      case "GET":
-        value = RestMode.GET;
-        break;
-      case "POST":
-        value = RestMode.POST;
-        break;
-      default:
-        throw new IllegalArgumentException("HardwareAddress invalid. \"mode\" - " + properties.get("mode") + " " +
-            "unknown.");
+    if (properties.get("mode") != null) {
+      switch (properties.get("mode").toUpperCase()) {
+        case "GET":
+          value = RestMode.GET;
+          break;
+        case "POST":
+          value = RestMode.POST;
+          break;
+        default:
+          throw new IllegalArgumentException("HardwareAddress invalid. \"mode\" - " + properties.get("mode") + " " +
+              "unknown.");
+      }
+    } else {
+      throw new IllegalArgumentException("No mode specified");
     }
 
     return value;
