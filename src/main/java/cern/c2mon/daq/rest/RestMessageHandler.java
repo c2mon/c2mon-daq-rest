@@ -32,7 +32,7 @@ import org.springframework.web.client.RestClientException;
  *
  * @author Franz Ritter
  */
-public class RESTMessageHandler extends EquipmentMessageHandler {
+public class RestMessageHandler extends EquipmentMessageHandler {
 
   /** The equipment logger of this class */
   private EquipmentLogger equipmentLogger;
@@ -42,14 +42,14 @@ public class RESTMessageHandler extends EquipmentMessageHandler {
 
   @Override
   public void connectToDataSource() throws EqIOException {
-    this.equipmentLogger = getEquipmentLogger(RESTMessageHandler.class);
+    this.equipmentLogger = getEquipmentLogger(RestMessageHandler.class);
     RestController restController = getContext().getBean(RestController.class);
     equipmentLogger.trace("enter connectToDataSource()");
 
     requestDelegator = new RequestDelegator(getEquipmentMessageSender(), getEquipmentConfiguration(),
         equipmentLogger, restController);
 
-    IDataTagChanger dataTagChanger = new RESTDataTagChanger(getEquipmentMessageSender(), equipmentLogger,
+    IDataTagChanger dataTagChanger = new RestDataTagChanger(getEquipmentMessageSender(), equipmentLogger,
         requestDelegator);
     getEquipmentConfigurationHandler().setDataTagChanger(dataTagChanger);
 

@@ -52,15 +52,15 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * Created by fritter on 22/01/16.
  */
 
-@UseHandler(RESTMessageHandler.class)
+@UseHandler(RestMessageHandler.class)
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = WebConfigTest.class)
 @WebAppConfiguration
-public class RESTMessageHandlerTest extends GenericMessageHandlerTest implements ApplicationContextAware {
+public class RestMessageHandlerTest extends GenericMessageHandlerTest implements ApplicationContextAware {
 
   // reference to the instance of the handler to test
-  RESTMessageHandler theHandler;
+  RestMessageHandler theHandler;
 
   ApplicationContext context;
 
@@ -69,7 +69,7 @@ public class RESTMessageHandlerTest extends GenericMessageHandlerTest implements
     log.info("entering beforeTest()..");
 
     // cast the reference (declared in the parent class) to the expected type
-    theHandler = (RESTMessageHandler) msgHandler;
+    theHandler = (RestMessageHandler) msgHandler;
     theHandler.setContext(context);
 //    theHandler.setRequestDelegator(new RequestDelegator(theHandler.getEquipmentMessageSender(), theHandler.getEquipmentConfiguration(), theHandler.getEquipmentLogger(RESTMessageHandler.class), restController));
 

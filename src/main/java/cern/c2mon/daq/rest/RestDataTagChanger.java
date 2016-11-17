@@ -32,7 +32,7 @@ import static java.lang.String.format;
 /**
  * Handles the DataTagChange operations triggered by a new Configuration.
  */
-public class RESTDataTagChanger implements IDataTagChanger {
+public class RestDataTagChanger implements IDataTagChanger {
 
   /**
    * The equipment logger of this class.
@@ -44,7 +44,7 @@ public class RESTDataTagChanger implements IDataTagChanger {
 
   private RequestDelegator requestDelegator;
 
-  public RESTDataTagChanger(IEquipmentMessageSender sender, EquipmentLogger logger, RequestDelegator requestDelegator) {
+  public RestDataTagChanger(IEquipmentMessageSender sender, EquipmentLogger logger, RequestDelegator requestDelegator) {
     this.equipmentMessageSender = sender;
     this.equipmentLogger = logger;
     this.requestDelegator = requestDelegator;
