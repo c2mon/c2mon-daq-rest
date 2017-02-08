@@ -16,12 +16,13 @@
  *****************************************************************************/
 package cern.c2mon.daq.rest.controller;
 
-import cern.c2mon.daq.rest.scheduling.PostScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import cern.c2mon.daq.rest.scheduling.PostScheduler;
 
 /**
  * This class is responsible for getting 'REST-POST' requests from clients.

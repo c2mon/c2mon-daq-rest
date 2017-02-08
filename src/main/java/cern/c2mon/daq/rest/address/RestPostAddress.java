@@ -16,9 +16,10 @@
  *****************************************************************************/
 package cern.c2mon.daq.rest.address;
 
-import cern.c2mon.shared.common.datatag.address.impl.HardwareAddressImpl;
 import lombok.Getter;
 import lombok.Setter;
+
+import cern.c2mon.shared.common.datatag.address.impl.HardwareAddressImpl;
 
 /**
  * @author Franz Ritter

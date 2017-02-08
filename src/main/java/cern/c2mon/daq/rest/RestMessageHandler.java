@@ -17,7 +17,6 @@
 package cern.c2mon.daq.rest;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
 import org.springframework.web.client.RestClientException;
 
 import cern.c2mon.daq.common.EquipmentMessageHandler;
@@ -26,7 +25,6 @@ import cern.c2mon.daq.rest.controller.RestController;
 import cern.c2mon.daq.tools.equipmentexceptions.EqIOException;
 import cern.c2mon.shared.common.datatag.ISourceDataTag;
 import cern.c2mon.shared.common.datatag.SourceDataQuality;
-import org.springframework.web.client.RestClientException;
 
 /**
  * Entry point of the REST module. The connectToDataSource() method is called
@@ -51,8 +49,7 @@ public class RestMessageHandler extends EquipmentMessageHandler {
 
     requestDelegator = new RequestDelegator(getEquipmentMessageSender(), getEquipmentConfiguration(), restController);
 
-    IDataTagChanger dataTagChanger = new RestDataTagChanger(getEquipmentMessageSender(),
-        requestDelegator);
+    IDataTagChanger dataTagChanger = new RestDataTagChanger(getEquipmentMessageSender(), requestDelegator);
     getEquipmentConfigurationHandler().setDataTagChanger(dataTagChanger);
 
 

@@ -16,14 +16,6 @@ package cern.c2mon.daq.rest;
  * along with C2MON. If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
 
-import cern.c2mon.daq.common.IEquipmentMessageSender;
-import cern.c2mon.daq.rest.config.WebConfigTest;
-import cern.c2mon.daq.rest.controller.RestController;
-import cern.c2mon.daq.rest.address.RestAddressFactory;
-import cern.c2mon.daq.rest.address.RestPostAddress;
-import cern.c2mon.daq.rest.scheduling.PostScheduler;
-import cern.c2mon.shared.common.datatag.*;
-import cern.c2mon.shared.common.process.IEquipmentConfiguration;
 import java.util.HashMap;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +39,9 @@ import cern.c2mon.daq.rest.config.WebConfigTest;
 import cern.c2mon.daq.rest.controller.RestController;
 import cern.c2mon.daq.rest.scheduling.PostScheduler;
 import cern.c2mon.shared.common.datatag.ISourceDataTag;
-import cern.c2mon.shared.common.datatag.SourceDataQuality;
+import cern.c2mon.shared.common.datatag.SourceDataTagQuality;
+import cern.c2mon.shared.common.datatag.SourceDataTagQualityCode;
+import cern.c2mon.shared.common.datatag.ValueUpdate;
 import cern.c2mon.shared.common.process.IEquipmentConfiguration;
 
 import static org.easymock.EasyMock.expectLastCall;

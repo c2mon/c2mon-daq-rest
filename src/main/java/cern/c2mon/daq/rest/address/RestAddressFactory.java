@@ -16,10 +16,10 @@
  *****************************************************************************/
 package cern.c2mon.daq.rest.address;
 
+import java.util.Map;
+
 import cern.c2mon.shared.common.datatag.SourceDataTag;
 import cern.c2mon.shared.common.datatag.address.HardwareAddress;
-
-import java.util.Map;
 
 /**
  * This factory class is used to create HardwareAddress instances out of a
