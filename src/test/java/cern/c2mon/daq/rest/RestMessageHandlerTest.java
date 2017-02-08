@@ -16,6 +16,8 @@ package cern.c2mon.daq.rest;
  * along with C2MON. If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
 
+import com.sun.istack.internal.NotNull;
+import com.sun.istack.internal.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
@@ -89,12 +91,12 @@ public class RestMessageHandlerTest extends GenericMessageHandlerTest implements
   @DirtiesContext
   public void restGetCommFaultSuccessful() {
     // messageSender mock setup
-    Capture<Long> id = new Capture<>();
-    Capture<String> tagName = new Capture<>();
-    Capture<Boolean> val = new Capture<>();
-    Capture<String> msg = new Capture<>();
+    Capture<Long> id = EasyMock.newCapture();
+    Capture<String> tagName = EasyMock.newCapture();
+    Capture<Boolean> val = EasyMock.newCapture();
+    Capture<String> msg = EasyMock.newCapture();
 
-    messageSender.sendCommfaultTag(EasyMock.capture(id), EasyMock.capture(tagName), EasyMock.capture(val), EasyMock.capture(msg));
+    messageSender.sendCommfaultTag(EasyMock.captureLong(id), EasyMock.capture(tagName), EasyMock.captureBoolean(val), EasyMock.capture(msg));
     expectLastCall().once();
 
     // record the mock
@@ -205,12 +207,12 @@ public class RestMessageHandlerTest extends GenericMessageHandlerTest implements
   @DirtiesContext
   public void restPostCommFaultSuccessful() {
     // messageSender mock setup
-    Capture<Long> id = new Capture<>();
-    Capture<String> tagName = new Capture<>();
-    Capture<Boolean> val = new Capture<>();
-    Capture<String> msg = new Capture<>();
+    Capture<Long> id = EasyMock.newCapture();
+    Capture<String> tagName = EasyMock.newCapture();
+    Capture<Boolean> val = EasyMock.newCapture();
+    Capture<String> msg = EasyMock.newCapture();
 
-    messageSender.sendCommfaultTag(EasyMock.capture(id), EasyMock.capture(tagName), EasyMock.capture(val), EasyMock.capture(msg));
+    messageSender.sendCommfaultTag(EasyMock.captureLong(id), EasyMock.capture(tagName), EasyMock.captureBoolean(val), EasyMock.capture(msg));
     expectLastCall().once();
 
     // record the mock
