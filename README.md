@@ -36,8 +36,7 @@ The following table describes the key/value pairs that the `DataTagAddress` must
 | Key | Type | Mandatory? | Explanation |
 | --- | ---- | ---------- | ----------- |
 | mode |'POST' | Yes | Selects POST endpoint mode |
-| postFrequency | Integer | No | Expected update interval (in seconds). In case an update is not received within this interval, the tag will be invalidated.
-By default, no interval is specified. |
+| postFrequency | Integer | No | Expected update interval (in seconds). In case an update is not received within this interval, the tag will be invalidated. By default, no interval is specified. |
 
 ## Example configuration
 
