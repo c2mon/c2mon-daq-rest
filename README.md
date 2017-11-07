@@ -67,6 +67,13 @@ curl -XPOST http://137.138.46.95:8080/tags/myTagEndpoint -d '1337' -H 'Content-T
 The `Content-Type` header must be set correctly to ensure the POST body is decoded correctly. The two recommended types to use are `text/plain` and `text/json`.
 
 
+# General configuration tips
+In order to configure RESTful datatags you have first to declare a REST DAQ [Process](http://c2mon.web.cern.ch/c2mon/docs/latest/user-guide/client-api/configuration/#configuring-processes) and [Equipment](http://c2mon.web.cern.ch/c2mon/docs/latest/user-guide/client-api/configuration/#configuring-equipment) to which you want then to attach the tags. 
+
+Please read therefore also the documentation about the [C2MON configuration API](http://c2mon.web.cern.ch/c2mon/docs/latest/user-guide/client-api/configuration/#configuration-api). 
+
+The `EquipmentMessageHandler` class to be specified during the Equipment creation is: `cern.c2mon.daq.rest.RestMessageHandler`
+
 # Commands
 
 The REST DAQ does not support commands.
