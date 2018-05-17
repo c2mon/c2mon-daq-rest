@@ -48,6 +48,11 @@ address.put("postFrequency", "60");
 DataTag tag = DataTag.create("myTagEndpoint", String.class, new DataTagAddress(address)).build();
 ```
 
+A full configuration example ready to download is available from here:
+
+https://gitlab.cern.ch/c2mon/c2mon-configuration-examples
+
+
 ## Example usage
 
 The following example sends the value `1337` to the endpoint which has a tag with the id `1003` registered:
