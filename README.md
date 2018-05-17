@@ -5,11 +5,23 @@ The REST DAQ allows the user to publish data through RESTful HTTP requests in tw
 - Performing periodic GET requests to a pre-defined web service URL;
 - Exposing a REST endpoint which accepts POST requests.
 
-# Downloading latest stable tarball release
+# Downloading latest stable distribution tarball
 
 The c2mon-daq-rest tarball release can be downloaded from [CERN Nexus Repository](https://nexus.web.cern.ch/nexus/#nexus-search;gav~cern.c2mon.daq~c2mon-daq-rest~~tar.gz~)
 
 Please check [here](https://gitlab.cern.ch/c2mon/c2mon-daq-rest/tags) for the latest stable releaes version.
+
+## Installing
+
+- Download the latest stable distribution tarball
+- Note, that the tarball does not include a root folder, so you have to create this yourself before extracting it:
+  
+  ```bash
+  mkdir c2mon-daq-rest; tar -xzf c2mon-daq-rest-1.0.x-dist.tar.gz -C c2mon-daq-rest
+  
+  ```
+  
+Please note that you have first to generate a configuration for a REST DAQ process, before you can actually start the DAQ. This is explained further down.
 
 
 # Periodic GET
