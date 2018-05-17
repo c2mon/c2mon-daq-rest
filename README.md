@@ -5,6 +5,13 @@ The REST DAQ allows the user to publish data through RESTful HTTP requests in tw
 - Performing periodic GET requests to a pre-defined web service URL;
 - Exposing a REST endpoint which accepts POST requests.
 
+# Downloading latest stable tarball release
+
+The c2mon-daq-rest tarball release can be downloaded from [CERN Nexus Repository](https://nexus.web.cern.ch/nexus/#nexus-search;gav~cern.c2mon.daq~c2mon-daq-rest~~tar.gz~)
+
+Please check [here](https://gitlab.cern.ch/c2mon/c2mon-daq-rest/tags) for the latest stable releaes version.
+
+
 # Periodic GET
 
 The following table describes the key/value pairs that the `DataTagAddress` must contain for the REST DAQ to perform a periodic GET.
