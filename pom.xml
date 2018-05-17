@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>c2mon-daq-rest</artifactId>
-  <version>1.8.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <packaging>jar</packaging>
   <description>DAQ module for acquiring data via REST by either polling or exposing endpoints</description>
 
@@ -17,7 +17,7 @@
     <url>https://gitlab.cern.ch/c2mon/c2mon-daq-rest</url>
     <connection>scm:git:ssh://git@gitlab.cern.ch/c2mon/c2mon-daq-rest.git</connection>
     <developerConnection>scm:git:ssh://git@gitlab.cern.ch:7999/c2mon/c2mon-daq-rest.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>1.0.0</tag>
   </scm>
 
   <dependencies>
