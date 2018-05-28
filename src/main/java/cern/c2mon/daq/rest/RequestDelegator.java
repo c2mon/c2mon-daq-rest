@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (C) 2010-2016 CERN. All rights not expressly granted are reserved.
+ * Copyright (C) 2010-2018 CERN. All rights not expressly granted are reserved.
  *
  * This file is part of the CERN Control and Monitoring Platform 'C2MON'.
  * C2MON is free software: you can redistribute it and/or modify it under the
@@ -21,6 +21,7 @@ import cern.c2mon.daq.common.conf.equipment.IDataTagChanger;
 import cern.c2mon.daq.rest.address.RestAddressFactory;
 import cern.c2mon.daq.rest.address.RestGetAddress;
 import cern.c2mon.daq.rest.address.RestPostAddress;
+import cern.c2mon.daq.rest.config.TagConfigurer;
 import cern.c2mon.daq.rest.controller.RestController;
 import cern.c2mon.daq.rest.scheduling.GetScheduler;
 import cern.c2mon.daq.rest.scheduling.PostScheduler;
@@ -60,8 +61,9 @@ public class RequestDelegator {
     this.getScheduler = new GetScheduler(sender, configuration);
     this.postScheduler = new PostScheduler(sender, configuration);
 
-    // add the Scheduler to the controller
+    // add the Scheduler and TagConfigurer to the controller
     controller.setPostScheduler(postScheduler);
+    controller.setTagConfigurer(new TagConfigurer(configuration.getName()));
   }
 
   /**

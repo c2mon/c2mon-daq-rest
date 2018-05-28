@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (C) 2010-2016 CERN. All rights not expressly granted are reserved.
+ * Copyright (C) 2010-2018 CERN. All rights not expressly granted are reserved.
  * <p/>
  * This file is part of the CERN Control and Monitoring Platform 'C2MON'.
  * C2MON is free software: you can redistribute it and/or modify it under the
@@ -16,13 +16,17 @@
  *****************************************************************************/
 package cern.c2mon.daq.rest.controller;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import cern.c2mon.daq.rest.RestTagUpdate;
+import cern.c2mon.daq.rest.config.TagConfigurer;
 import cern.c2mon.daq.rest.scheduling.PostScheduler;
+import cern.c2mon.shared.common.datatag.ValueUpdate;
 
 /**
  * This class is responsible for getting 'REST-POST' requests from clients.
@@ -31,9 +35,12 @@ import cern.c2mon.daq.rest.scheduling.PostScheduler;
  */
 @Controller
 @Slf4j
+@Setter
 public class RestController {
 
   private PostScheduler postScheduler;
+
+  private TagConfigurer tagConfigurer;
 
   /**
    * This method receives HTTP POST requests. In order to ensure that the
@@ -61,18 +68,29 @@ public class RestController {
     try {
       // Check if the identifier is numeric. If nor request the id from the daq based on the name
       tagId = StringUtils.isNumeric(identifier) ? Long.parseLong(identifier) : postScheduler.getIdByName(identifier);
-
     } catch (Exception e) {
       log.warn("Unexpected Problem: Received a message with the identifier:" + identifier + ":", e);
       return HttpStatus.BAD_REQUEST;
     }
 
-    HttpStatus status = postScheduler.sendValueToServer(tagId, value);
-    return status;
+    return postScheduler.sendValueToServer(tagId, new ValueUpdate(value));
   }
 
-  public void setPostScheduler(PostScheduler scheduler) {
-    this.postScheduler = scheduler;
-  }
 
+  @RequestMapping(value = "/update", method = RequestMethod.POST)
+  @ResponseBody
+  public HttpStatus postHandlerJson(@RequestBody RestTagUpdate update) {
+    boolean ok = true;
+    if (!postScheduler.tagExist(update.getName())) {
+      ok = tagConfigurer.createTag(update);
+    }
+
+    if (!ok) {
+      log.warn("Could not create new tag for name {}", update.getName());
+      return HttpStatus.BAD_REQUEST;
+    }
+
+    ValueUpdate valueUpdate = new ValueUpdate(update.getValue(), update.getValueDescription(), update.getTimestamp());
+    return postScheduler.sendValueToServer(update.getName(), valueUpdate);
+  }
 }

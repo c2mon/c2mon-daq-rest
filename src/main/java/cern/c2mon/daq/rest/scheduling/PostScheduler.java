@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (C) 2010-2016 CERN. All rights not expressly granted are reserved.
+ * Copyright (C) 2010-2018 CERN. All rights not expressly granted are reserved.
  *
  * This file is part of the CERN Control and Monitoring Platform 'C2MON'.
  * C2MON is free software: you can redistribute it and/or modify it under the
@@ -28,7 +28,6 @@ import cern.c2mon.shared.common.datatag.SourceDataTagQuality;
 import cern.c2mon.shared.common.datatag.SourceDataTagQualityCode;
 import cern.c2mon.shared.common.datatag.ValueUpdate;
 import cern.c2mon.shared.common.process.IEquipmentConfiguration;
-import cern.c2mon.shared.common.type.TypeConverter;
 
 /**
  * @author Franz Ritter
@@ -51,26 +50,18 @@ public class PostScheduler extends RestScheduler {
    * and gives a HttpStatus.OK return.
    *
    * @param id    The id of the corresponding DataTag which this message belongs to.
-   * @param value The Value for the DataTag
+   * @param valueUpdate The Value for the DataTag
    *
    * @return Status based on the success of the processing of the value.
    */
-  public HttpStatus sendValueToServer(Long id, Object value) {
+  public HttpStatus sendValueToServer(Long id, ValueUpdate valueUpdate) {
     // send message if the id is known to the server(and daq)
     if (this.contains(id)) {
       ISourceDataTag tag = equipmentConfiguration.getSourceDataTag(id);
       RestPostAddress address = getAddress(id);
       ReceiverTask newTask = new ReceiverTask(id);
 
-      if (TypeConverter.isConvertible(value, tag.getDataType())) {
-        Object message = TypeConverter.cast(value, tag.getDataType());
-        equipmentMessageSender.update(id, new ValueUpdate(message, System.currentTimeMillis()));
-
-      } else {
-        equipmentMessageSender.update(id, new SourceDataTagQuality(SourceDataTagQualityCode.UNSUPPORTED_TYPE));
-        log.warn("Message received for DataTag:" + id + " which DataType is not supported.");
-        return HttpStatus.BAD_REQUEST;
-      }
+      equipmentMessageSender.update(id, valueUpdate);
 
       // reset the timer for the tag
       if (idToTask.get(id).cancel()) {
@@ -83,11 +74,23 @@ public class PostScheduler extends RestScheduler {
         timer.schedule(newTask, address.getFrequency());
       }
 
+      if (equipmentConfiguration.getSourceDataTag(id).getCurrentValue().getQuality().getQualityCode() == SourceDataTagQualityCode.UNSUPPORTED_TYPE) {
+        log.warn("Value '{}' for tag #{} could not be converted to tag data type {}", valueUpdate, id, tag.getDataType());
+        return HttpStatus.BAD_REQUEST;
+      }
       return HttpStatus.OK;
     }
     else {
-      log.warn("DAQ " + equipmentConfiguration.getName() + " received a message with the id:" + id + ". " +
-              "This id is not supported from the DAQ.");
+      log.warn("Received message for tag id #{} which is unknown.", id);
+      return HttpStatus.BAD_REQUEST;
+    }
+  }
+  
+  public HttpStatus sendValueToServer(String name, ValueUpdate valueUpdate) {
+    try {
+      return sendValueToServer(getIdByName(name), valueUpdate);
+    } catch (Exception e) {
+      log.warn("Unexpected Problem. Received a message with identifier {}", name, e);
       return HttpStatus.BAD_REQUEST;
     }
   }
@@ -97,9 +100,18 @@ public class PostScheduler extends RestScheduler {
       return equipmentConfiguration.getSourceDataTagIdByName(name);
     }
     catch (IllegalArgumentException e) {
-      log.warn("DAQ " + equipmentConfiguration.getName() + " received a message with the name:" + name +
-              ". This id is not supported from the DAQ.");
+      log.warn("Received message for tag {} which is unknown.", name);
       throw e;
+    }
+  }
+  
+  public boolean tagExist(String name) {
+    try {
+      equipmentConfiguration.getSourceDataTagIdByName(name);
+      return true;
+    }
+    catch (IllegalArgumentException e) {
+      return false;
     }
   }
 
@@ -121,8 +133,7 @@ public class PostScheduler extends RestScheduler {
    * Simply send the last received tag value again
    */
   public void refreshDataTag(Long id) {
-    ISourceDataTag tag = equipmentConfiguration.getSourceDataTag(id);
-    equipmentMessageSender.sendTagFiltered(tag, tag.getCurrentValue(), System.currentTimeMillis());
+    log.info("Refresh of data tag not possible for POST address");
   }
 
   private RestPostAddress getAddress(Long id) {
