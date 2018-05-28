@@ -27,6 +27,11 @@
       <artifactId>c2mon-daq-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>cern.c2mon.client</groupId>
+      <artifactId>c2mon-client-core</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
       <groupId>cern.c2mon.shared</groupId>
       <artifactId>c2mon-shared-common</artifactId>
     </dependency>
