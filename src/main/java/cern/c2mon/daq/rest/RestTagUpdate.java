@@ -20,21 +20,37 @@ import java.util.Map;
 
 import lombok.Data;
 
+/**
+ * Bean, representing the JSON message sent via HTTP POST
+ * @author Matthias Braeger
+ */
 @Data
 public class RestTagUpdate {
+  /** DataTag name. This is a mandatory field! */
   private String name;
+
+  /** The static description of the DataTag (optional) */
   private String description;
+
+  /**
+   * Expected update interval (in seconds).
+   * In case an update is not received within this interval, the tag will be invalidated.
+   * By default, no interval is specified.
+   */
   private int postFrequency = -1;
+
+  /** The value type, which can be any raw data type or any complex Java Class name (optional) */
   private String type;
- 
-  /** The new tag value as String*/
-  private String value;
-  
+
+  /** The new tag value as String (Optional) */
+  private Object value;
+
   /** An optional description for the value update */
   private String valueDescription = "";
-  
+
+  /** Optional metadata arguments */
   private Map<String, Object> metadata;
-  
-  /**  time in milliseconds */
+
+  /**  time in milliseconds (optional) */
   private long timestamp = System.currentTimeMillis();
 }
