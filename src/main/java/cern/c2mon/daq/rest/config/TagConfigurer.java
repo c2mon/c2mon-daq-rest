@@ -17,6 +17,7 @@
 package cern.c2mon.daq.rest.config;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -48,24 +49,36 @@ public class TagConfigurer {
   }
 
   /**
+   * Constructor for testing purpose only!
+   */
+  protected TagConfigurer(String equipmentName, ConfigurationService configurationService) {
+    this.equipmentName = equipmentName;
+    this.configurationService = configurationService;
+  }
+
+  /**
    * Creates on the fly a tag in C2MON
    * @param tag The Rest POST message received
    * @return <code>true</code>, if configuration was successful
    */
   public boolean createTag(RestTagUpdate tag) {
-    if (tag.getName().isEmpty()) {
+    if (tag.getName() == null || tag.getName().isEmpty()) {
       return false;
     }
-    
+
     log.info("Creating new tag with name {} ...", tag.getName());
     ConfigurationReport report = configurationService.createDataTag(
         equipmentName,
         createConfiguration(tag));
 
+    if (report == null || report.getStatus() == null) {
+      return false;
+    }
+
     return report.getStatus() == Status.OK;
   }
 
-  private DataTag createConfiguration(RestTagUpdate tag) {
+  protected DataTag createConfiguration(RestTagUpdate tag) {
     DataTag dataTag = DataTag.create(tag.getName(), getType(tag), getAddress(tag.getPostFrequency())).build();
     dataTag.setDescription(tag.getDescription());
 
@@ -78,26 +91,54 @@ public class TagConfigurer {
     return dataTag;
   }
 
-  private Class<?> getType(RestTagUpdate tag) {
+  /**
+   * Calculates the correct type of the message
+   * @param tag The Tag update
+   * @return a class reference
+   */
+  protected Class<?> getType(RestTagUpdate tag) {
     Class<?> clazz = TypeConverter.getType(tag.getType());
 
     if (clazz != null) {
       return clazz;
     }
-    else if (StringUtils.isEmpty(tag.getValue())) {
+    else if (tag.getValue() == null) {
       return String.class;
     }
-    else if (StringUtils.isNumeric(tag.getValue())){
+
+    if (tag.getValue() instanceof String) {
+      String value = (String) tag.getValue();
+
+      if (StringUtils.isEmpty(value)) {
+        return String.class;
+      }
+      else if (isNumber(value)){
+        return Double.class;
+      }
+      else if (value.equalsIgnoreCase(Boolean.TRUE.toString()) || value.equalsIgnoreCase(Boolean.FALSE.toString())) {
+        return Boolean.class;
+      }
+    }
+    else if (tag.getValue() instanceof Number) {
       return Double.class;
     }
-    else if (tag.getValue().equalsIgnoreCase(Boolean.TRUE.toString()) || tag.getValue().equalsIgnoreCase(Boolean.FALSE.toString())) {
-      return Boolean.class;
+    else if (tag.getValue() instanceof Map) {
+      return HashMap.class;
     }
 
-    return String.class;
+    return tag.getValue().getClass();
   }
 
-  private DataTagAddress getAddress(int postFrequency) {
+  private boolean isNumber(String value) {
+    try {
+      Double.valueOf(value);
+      return true;
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
+  protected DataTagAddress getAddress(int postFrequency) {
     HashMap<String, String> address = new HashMap<>();
     address.put("mode", "POST");
 
