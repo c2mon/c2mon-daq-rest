@@ -16,7 +16,14 @@ package cern.c2mon.daq.rest;
  * along with C2MON. If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
 
-import lombok.extern.slf4j.Slf4j;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -28,6 +35,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -39,22 +47,20 @@ import cern.c2mon.daq.test.UseConf;
 import cern.c2mon.daq.test.UseHandler;
 import cern.c2mon.daq.tools.equipmentexceptions.EqIOException;
 import cern.c2mon.shared.common.datatag.SourceDataTagValue;
-
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by fritter on 22/01/16.
  */
 
 @UseHandler(RestMessageHandler.class)
-@Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = WebConfigTest.class)
 @WebAppConfiguration
+@TestPropertySource(properties = {
+    "c2mon.daq.rest.autoConfiguration=false"
+})
+@Slf4j
 public class RestMessageHandlerTest extends GenericMessageHandlerTest implements ApplicationContextAware {
 
   // reference to the instance of the handler to test

@@ -19,11 +19,15 @@ package cern.c2mon.daq.rest.config;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.context.TestPropertySource;
 
 /**
  * Created by fritter on 23/05/16.
  */
 @SpringBootApplication
 @ComponentScan({"cern.c2mon.daq.rest"})
+@TestPropertySource(properties = {
+    "c2mon.daq.rest.autoConfiguration=false"
+})
 public class WebConfigTest {
 }
