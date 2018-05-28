@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (C) 2010-2016 CERN. All rights not expressly granted are reserved.
+ * Copyright (C) 2010-2018 CERN. All rights not expressly granted are reserved.
  *
  * This file is part of the CERN Control and Monitoring Platform 'C2MON'.
  * C2MON is free software: you can redistribute it and/or modify it under the
@@ -24,7 +24,8 @@ import cern.c2mon.daq.common.conf.equipment.IDataTagChanger;
 import cern.c2mon.daq.rest.controller.RestController;
 import cern.c2mon.daq.tools.equipmentexceptions.EqIOException;
 import cern.c2mon.shared.common.datatag.ISourceDataTag;
-import cern.c2mon.shared.common.datatag.SourceDataQuality;
+import cern.c2mon.shared.common.datatag.SourceDataTagQuality;
+import cern.c2mon.shared.common.datatag.SourceDataTagQualityCode;
 
 /**
  * Entry point of the REST module. The connectToDataSource() method is called
@@ -59,9 +60,9 @@ public class RestMessageHandler extends EquipmentMessageHandler {
         requestDelegator.addDataTag(dataTag);
       }
       catch (IllegalArgumentException ex) {
-        log.warn("DataTag " + dataTag.getId() + " not configurable - Reason: " + ex.getMessage());
-        getEquipmentMessageSender().sendInvalidTag(dataTag, SourceDataQuality.INCORRECT_NATIVE_ADDRESS, "DataTag " +
-                dataTag.getId() + " not configurable - Reason: " + ex.getMessage());
+        log.warn("DataTag {} (#{}) not configurable - Reason: {}", dataTag.getName(), dataTag.getId(), ex.getMessage());
+        getEquipmentMessageSender().update(dataTag.getId(), 
+            new SourceDataTagQuality(SourceDataTagQualityCode.INCORRECT_NATIVE_ADDRESS, "DataTag not configurable - Reason: " + ex.getMessage()));
       }
     }
 
@@ -91,19 +92,7 @@ public class RestMessageHandler extends EquipmentMessageHandler {
     log.trace("Entering refreshAllDataTags method.");
 
     for (ISourceDataTag dataTag : getEquipmentConfiguration().getSourceDataTags().values()) {
-      try {
-        requestDelegator.refreshDataTag(dataTag.getId());
-      }
-      catch (IllegalArgumentException ex) {
-        log.warn("Problem causes by refreshing. Reason: " + ex.getMessage());
-        getEquipmentMessageSender().sendInvalidTag(dataTag, SourceDataQuality.INCORRECT_NATIVE_ADDRESS, "Problem " +
-                "causes by refreshing. Reason: " + ex.getMessage());
-      }
-      catch (RestClientException ex) {
-        log.warn("Connection problem causes by refreshing:: " + ex.getMessage());
-        getEquipmentMessageSender().sendInvalidTag(dataTag, SourceDataQuality.DATA_UNAVAILABLE, "Connection problem " +
-                "causes by refreshing:: " + ex.getMessage());
-      }
+      refreshDataTag(dataTag.getId());
     }
 
     log.trace("Leaving refreshAllDataTags method.");
@@ -116,14 +105,16 @@ public class RestMessageHandler extends EquipmentMessageHandler {
       requestDelegator.refreshDataTag(dataTagId);
     }
     catch (IllegalArgumentException ex) {
-      log.warn("Problem causes by refreshing. Reason: " + ex.getMessage());
-      getEquipmentMessageSender().sendInvalidTag(getEquipmentConfiguration().getSourceDataTag(dataTagId),
-              SourceDataQuality.INCORRECT_NATIVE_ADDRESS, "Problem causes by refreshing. Reason: " + ex.getMessage());
+      log.warn("Problem causes by refreshing of tag #{}. Reason: {}", dataTagId, ex.getMessage());
+      getEquipmentMessageSender().update(dataTagId, 
+          new SourceDataTagQuality(SourceDataTagQualityCode.INCORRECT_NATIVE_ADDRESS, 
+              "Problem causes by refreshing. Reason: " + ex.getMessage()));
     }
     catch (RestClientException ex) {
-      log.warn("Connection problem causes by refreshing:: " + ex.getMessage());
-      getEquipmentMessageSender().sendInvalidTag(getEquipmentConfiguration().getSourceDataTag(dataTagId),
-              SourceDataQuality.DATA_UNAVAILABLE, "Connection problem causes by refreshing:: " + ex.getMessage());
+      log.warn("Connection problem causes by refreshing of tag #{}. Reason: {}", dataTagId, ex.getMessage());
+      getEquipmentMessageSender().update(dataTagId, 
+          new SourceDataTagQuality(SourceDataTagQualityCode.DATA_UNAVAILABLE, 
+              "Connection problem causes by refreshing: " + ex.getMessage()));
     }
 
     log.trace("Leaving refreshDataTag method.");

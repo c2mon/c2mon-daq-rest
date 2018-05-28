@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (C) 2010-2016 CERN. All rights not expressly granted are reserved.
+ * Copyright (C) 2010-2018 CERN. All rights not expressly granted are reserved.
  *
  * This file is part of the CERN Control and Monitoring Platform 'C2MON'.
  * C2MON is free software: you can redistribute it and/or modify it under the
@@ -21,7 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import cern.c2mon.daq.common.IEquipmentMessageSender;
 import cern.c2mon.daq.common.conf.equipment.IDataTagChanger;
 import cern.c2mon.shared.common.datatag.ISourceDataTag;
-import cern.c2mon.shared.common.datatag.SourceDataQuality;
+import cern.c2mon.shared.common.datatag.SourceDataTagQuality;
+import cern.c2mon.shared.common.datatag.SourceDataTagQualityCode;
 import cern.c2mon.shared.daq.config.ChangeReport;
 
 /**
@@ -53,11 +54,12 @@ public class RestDataTagChanger implements IDataTagChanger {
       changeReport.appendInfo("URL successful tested and added");
     }
     catch (IllegalArgumentException ex) {
-      log.warn("DataTag " + sourceDataTag.getId() + " not configurable - Reason: " + ex.getMessage());
-      equipmentMessageSender.sendInvalidTag(sourceDataTag, SourceDataQuality.INCORRECT_NATIVE_ADDRESS, "DataTag " +
-              sourceDataTag.getId() + " not configurable - Reason: " + ex.getMessage());
-      changeReport.appendError("DataTag " + sourceDataTag.getId() + " cant be add to the Equipment - Reason: " + ex
-              .getMessage());
+      log.warn("DataTag #{} not configurable - Reason: {}", sourceDataTag.getId(), ex.getMessage());
+      equipmentMessageSender.update(sourceDataTag.getId(), 
+          new SourceDataTagQuality(SourceDataTagQualityCode.INCORRECT_NATIVE_ADDRESS, 
+              "Error configuring the provided address - Reason: " + ex.getMessage()));
+      
+      changeReport.appendError("DataTag " + sourceDataTag.getId() + " cannot be added to the Equipment - Reason: " + ex.getMessage());
     }
 
     log.trace("Leaving onAddDataTag method.");
