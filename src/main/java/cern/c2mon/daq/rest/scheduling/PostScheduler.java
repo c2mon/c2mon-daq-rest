@@ -30,7 +30,8 @@ import cern.c2mon.shared.common.datatag.ValueUpdate;
 import cern.c2mon.shared.common.process.IEquipmentConfiguration;
 
 /**
- * @author Franz Ritter
+ * Handles the freshness check for the POST tags and takes care of the value sending to the server
+ * @author Franz Ritter, Matthias Braeger
  */
 @Slf4j
 public class PostScheduler extends RestScheduler {
@@ -111,22 +112,31 @@ public class PostScheduler extends RestScheduler {
     }
   }
 
+  /**
+   * Returns the tag id for the given tag name, if it exists
+   * @param name tag name
+   * @return the tag id
+   */
   public Long getIdByName(String name) {
     try {
       return equipmentConfiguration.getSourceDataTagIdByName(name);
-    }
-    catch (IllegalArgumentException e) {
+    } catch (IllegalArgumentException e) {
       log.warn("Received message for tag {} which is unknown.", name);
       throw e;
     }
   }
 
+  /**
+   * Checks, if the DAQ core has a tag configured for the given name
+   * @param name tag name
+   * @return <code>true</code>, if tag with the given name is configured
+   */
   public boolean tagExist(String name) {
     try {
       equipmentConfiguration.getSourceDataTagIdByName(name);
       return true;
-    }
-    catch (IllegalArgumentException e) {
+    } catch (IllegalArgumentException e) {
+      log.trace("No tag found for name: {}", name);
       return false;
     }
   }
@@ -144,10 +154,11 @@ public class PostScheduler extends RestScheduler {
     }
   }
 
-  @Override
+
   /**
    * Simply send the last received tag value again
    */
+  @Override
   public void refreshDataTag(Long id) {
     log.info("Refresh of data tag not possible for POST address");
   }

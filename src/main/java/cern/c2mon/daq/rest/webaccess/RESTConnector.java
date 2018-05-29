@@ -27,7 +27,7 @@ import org.springframework.web.client.RestTemplate;
  *
  * @author Franz Ritter
  */
-public class RESTConnector {
+public final class RESTConnector {
 
   private RESTConnector() {}
 
