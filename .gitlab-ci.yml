@@ -5,6 +5,7 @@ stages:
 
 # Get the settings file from c2mon project
 before_script:
+  - rm -f settings.xml
   - wget https://gitlab.cern.ch/c2mon/c2mon/raw/master/settings.xml
 
 # Fully build and publish master branch
