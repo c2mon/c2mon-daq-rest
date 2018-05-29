@@ -39,11 +39,9 @@ import cern.c2mon.shared.common.datatag.address.HardwareAddress;
  */
 public abstract class RestAddressFactory {
 
-  private final static int DEFAULT_GET_FREQUENCY = 30 * 1000;
+  private static final int DEFAULT_GET_FREQUENCY = 30 * 1000;
 
-  private final static int DEFAULT_POST_FREQUENCY = 30 * 1000;
-
-  private final static double POST_FREQUENCY_TOLERANCE = 1.5;
+  private static final double POST_FREQUENCY_TOLERANCE = 1.5;
 
   public enum RestMode {
     GET, POST;

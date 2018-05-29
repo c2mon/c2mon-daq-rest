@@ -85,7 +85,23 @@ public class PostScheduler extends RestScheduler {
       return HttpStatus.BAD_REQUEST;
     }
   }
-  
+
+
+  /**
+   * If the Controller received successfully a message from a client this
+   * method handles all actions which needs to be done in that case. After
+   * receiving a message the ReceiverTask of the id must be restarted.
+   * Furthermore value must be cast to the given DataType of the
+   * corresponding DataTag.
+   * <p/>
+   * If this things are successful the scheduler sends the value to the server
+   * and gives a HttpStatus.OK return.
+   *
+   * @param name The name of the corresponding DataTag which this message belongs to.
+   * @param valueUpdate The Value for the DataTag
+   *
+   * @return Status based on the success of the processing of the value.
+   */
   public HttpStatus sendValueToServer(String name, ValueUpdate valueUpdate) {
     try {
       return sendValueToServer(getIdByName(name), valueUpdate);
@@ -104,7 +120,7 @@ public class PostScheduler extends RestScheduler {
       throw e;
     }
   }
-  
+
   public boolean tagExist(String name) {
     try {
       equipmentConfiguration.getSourceDataTagIdByName(name);

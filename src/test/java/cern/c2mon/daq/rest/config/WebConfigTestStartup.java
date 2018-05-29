@@ -29,5 +29,5 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = {
     "c2mon.daq.rest.autoConfiguration=false"
 })
-public class WebConfigTest {
+public class WebConfigTestStartup {
 }
