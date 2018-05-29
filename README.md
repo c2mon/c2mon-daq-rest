@@ -16,14 +16,14 @@ Note, that this default behaviour can be turned off by adding `c2mon.daq.rest.au
 Let's start with a simple example.
 Using the [CURL command] we can send the following JSON message to the REST DAQ and create at the same time a new `DataTag` of type Double. We assume that the the DAQ is running on the same host:
 
-```JSON
+```bash
 curl -i \
 -H "Accept: application/json" \
 -H "Content-Type:application/json" \
 -X POST --data '{"name": "rack/XYZ/temperature", "value": 23, "metadata": {"building": 123, "responsible": "Jon Doe"}}' "http://localhost:8080/update"
 ```
 
-## Fields allowed in JSON message
+## Supported fields in JSON message
 
 The JSON message is internally represented by [RestTagUpdate] class, which allows sending the following parameters:
 
