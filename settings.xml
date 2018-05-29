@@ -12,6 +12,12 @@
       
       <repositories>
         <repository>
+          <id>central</id>
+          <url>http://repo1.maven.org/maven2</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
           <id>nexus-c2mon</id>
           <name>C2MON Releases</name>
           <url>https://nexus.web.cern.ch/nexus/content/groups/public/</url>
@@ -29,8 +35,8 @@
       
       <pluginRepositories>
         <pluginRepository>
-          <id>nexus-public</id>
-          <url>https://nexus.web.cern.ch/nexus/content/groups/public/</url>
+          <id>central</id>
+          <url>http://repo1.maven.org/maven2</url>
           <releases><enabled>true</enabled></releases>
           <snapshots><enabled>true</enabled></snapshots>
         </pluginRepository>

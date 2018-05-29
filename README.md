@@ -153,7 +153,23 @@ The `EquipmentMessageHandler` class to be specified during the Equipment creatio
 For now, the REST DAQ does not support CommandTags.
 
 
-# C2MON Maven settings
+# Building from Source
+C2MON uses a [Maven][]-based build system.
+
+## Prerequisites
+
+[Git], [JDK 8 update 20 or later][JDK8 build] and [Maven].
+
+Be sure that your `JAVA_HOME` environment variable points to the `jdk1.8.0` folder
+extracted from the JDK download.
+
+## Check out sources
+`git clone https://github.com/c2mon/c2mon-daq-rest.git`
+
+## Compile and test; build all jars, distribution tarball, and docs
+`mvn package -DskipDockerBuild -DskipDockerTag --settings settings.xml`
+
+### C2MON Maven settings
 
 As C2MON is not (yet) storing the Artifacts in Central Maven Repository, please use the [Maven settings](settings.xml) file of this project to compile the code.
 
@@ -168,3 +184,7 @@ As C2MON is not (yet) storing the Artifacts in Central Maven Repository, please 
 [JSON Path]: https://github.com/jayway/JsonPath
 [C2MON Configuration API]: http://c2mon.web.cern.ch/c2mon/docs/user-guide/client-api/configuration/
 [CURL command]: https://curl.haxx.se/docs/manpage.html
+[Maven]: http://maven.apache.org
+[Git]: http://help.github.com/set-up-git-redirect
+[JDK8 build]: http://www.oracle.com/technetwork/java/javase/downloads
+[Pull requests]: http://help.github.com/send-pull-requests
