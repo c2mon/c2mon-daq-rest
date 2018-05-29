@@ -77,6 +77,11 @@ public class RestController {
   }
 
 
+  /**
+   * Receives the JSON HTTP POST messages and checks if the tag exists before sending the update
+   * @param update The JSON message that we received
+   * @return The status of the request. If the request was successful to the server the request will be HttpStatus.OK.
+   */
   @RequestMapping(value = "/update", method = RequestMethod.POST)
   @ResponseBody
   public HttpStatus postHandlerJson(@RequestBody RestTagUpdate update) {

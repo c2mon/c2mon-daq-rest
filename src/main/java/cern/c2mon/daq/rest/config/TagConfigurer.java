@@ -34,6 +34,7 @@ import cern.c2mon.shared.common.type.TypeConverter;
 
 /**
  * Provides methods to configure or update on-the-fly tags in C2MON
+ * 
  * @author Matthias Braeger
  */
 @Slf4j
@@ -45,7 +46,9 @@ public class TagConfigurer {
 
   /**
    * Default constructor
-   * @param equipmentName the equipment name
+   * 
+   * @param equipmentName
+   *          the equipment name
    */
   public TagConfigurer(String equipmentName) {
     this.equipmentName = equipmentName;
@@ -62,7 +65,9 @@ public class TagConfigurer {
 
   /**
    * Creates on the fly a tag in C2MON
-   * @param tag The Rest POST message received
+   * 
+   * @param tag
+   *          The Rest POST message received
    * @return <code>true</code>, if configuration was successful
    */
   public boolean createTag(RestTagUpdate tag) {
@@ -71,9 +76,7 @@ public class TagConfigurer {
     }
 
     log.info("Creating new tag with name {} ...", tag.getName());
-    ConfigurationReport report = configurationService.createDataTag(
-        equipmentName,
-        createConfiguration(tag));
+    ConfigurationReport report = configurationService.createDataTag(equipmentName, createConfiguration(tag));
 
     if (report == null || report.getStatus() == null) {
       return false;
@@ -97,7 +100,9 @@ public class TagConfigurer {
 
   /**
    * Calculates the correct type of the message
-   * @param tag The Tag update
+   * 
+   * @param tag
+   *          The Tag update
    * @return a class reference
    */
   protected Class<?> getType(RestTagUpdate tag) {
@@ -123,27 +128,26 @@ public class TagConfigurer {
     return tag.getValue().getClass();
   }
 
-
   private Class<?> getTypeOfStringValue(String value) {
     if (StringUtils.isEmpty(value)) {
       return String.class;
     }
-    else if (isNumber(value)){
+    if (isNumber(value)) {
       return Double.class;
     }
-    else if (value.equalsIgnoreCase(Boolean.TRUE.toString()) || value.equalsIgnoreCase(Boolean.FALSE.toString())) {
+    if (value.equalsIgnoreCase(Boolean.TRUE.toString()) || value.equalsIgnoreCase(Boolean.FALSE.toString())) {
       return Boolean.class;
     }
-    
+
     return String.class;
   }
-
 
   private boolean isNumber(String value) {
     try {
       Double.valueOf(value);
       return true;
-    } catch (Exception e) {
+    } catch (NumberFormatException e) {
+      log.trace("This is not a parsable number: {}", value);
       return false;
     }
   }
