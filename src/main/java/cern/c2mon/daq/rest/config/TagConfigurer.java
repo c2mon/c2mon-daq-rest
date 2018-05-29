@@ -43,6 +43,10 @@ public class TagConfigurer {
 
   private final String equipmentName;
 
+  /**
+   * Default constructor
+   * @param equipmentName the equipment name
+   */
   public TagConfigurer(String equipmentName) {
     this.equipmentName = equipmentName;
     this.configurationService = C2monServiceGateway.getConfigurationService();
@@ -102,32 +106,38 @@ public class TagConfigurer {
     if (clazz != null) {
       return clazz;
     }
-    else if (tag.getValue() == null) {
+    if (tag.getValue() == null) {
       return String.class;
     }
 
     if (tag.getValue() instanceof String) {
-      String value = (String) tag.getValue();
-
-      if (StringUtils.isEmpty(value)) {
-        return String.class;
-      }
-      else if (isNumber(value)){
-        return Double.class;
-      }
-      else if (value.equalsIgnoreCase(Boolean.TRUE.toString()) || value.equalsIgnoreCase(Boolean.FALSE.toString())) {
-        return Boolean.class;
-      }
+      return getTypeOfStringValue((String) tag.getValue());
     }
-    else if (tag.getValue() instanceof Number) {
+    if (tag.getValue() instanceof Number) {
       return Double.class;
     }
-    else if (tag.getValue() instanceof Map) {
+    if (tag.getValue() instanceof Map) {
       return HashMap.class;
     }
 
     return tag.getValue().getClass();
   }
+
+
+  private Class<?> getTypeOfStringValue(String value) {
+    if (StringUtils.isEmpty(value)) {
+      return String.class;
+    }
+    else if (isNumber(value)){
+      return Double.class;
+    }
+    else if (value.equalsIgnoreCase(Boolean.TRUE.toString()) || value.equalsIgnoreCase(Boolean.FALSE.toString())) {
+      return Boolean.class;
+    }
+    
+    return String.class;
+  }
+
 
   private boolean isNumber(String value) {
     try {

@@ -39,6 +39,11 @@ public class ConfigurationInitializer {
   @Getter
   String equipmentName;
 
+  /**
+   * Called by Spring before starting up the DAQ process
+   * @param context Spring context
+   * @return
+   */
   @Bean
   public InitializingBean autoConfigureDAQ(ApplicationContext context) {
     return () -> configureProcessAndEquipment(context);
