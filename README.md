@@ -166,7 +166,7 @@ extracted from the JDK download.
 ## Check out sources
 `git clone https://github.com/c2mon/c2mon-daq-rest.git`
 
-## Compile and test; build jar, and distribution tarball
+## Compile and test; build jar and distribution tarball
 `mvn package -DskipDockerBuild -DskipDockerTag --settings settings.xml`
 
 ### C2MON Maven settings
