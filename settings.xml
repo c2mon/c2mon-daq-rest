@@ -25,6 +25,13 @@
           <snapshots><enabled>false</enabled></snapshots>
         </repository>
         <repository>
+          <id>nexus-local</id>
+          <name>NEXUS Local</name>
+          <url>http://repository.cern.ch/nexus/content/repositories/c2mon-releases</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
           <id>nexus-c2mon-snapshots</id>
           <name>C2MON Snapshots</name>
           <url>https://nexus.web.cern.ch/nexus/content/groups/public-snapshots/</url>
