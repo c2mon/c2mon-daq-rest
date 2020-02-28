@@ -26,13 +26,13 @@ build:
 sonar_preview:
   type: sonar
   script:
-    - mvn -q -U -B clean compile sonar:sonar -Dmaven.test.skip=true -Dsonar.host.url=https://en-ice-sonar.cern.ch -Dsonar.analysis.mode=preview -Dsonar.gitlab.commit_sha=$CI_BUILD_REF -Dsonar.gitlab.ref_name=$CI_BUILD_REF_NAME -Dsonar.gitlab.project_id=$CI_PROJECT_ID -Dsonar.gitlab.max_major_issues_gate=0 --settings settings-release.xml --debug -X
+    - mvn -q -U -B clean compile sonar:sonar -Dmaven.test.skip=true -Dsonar.host.url=${SONAR_URL} -Dsonar.analysis.mode=preview -Dsonar.gitlab.commit_sha=$CI_BUILD_REF -Dsonar.gitlab.ref_name=$CI_BUILD_REF_NAME -Dsonar.gitlab.project_id=$CI_PROJECT_ID -Dsonar.gitlab.max_major_issues_gate=0 --settings settings-release.xml --debug -X
   except:
     - master
 
 quality_assurance:
   stage: sonar
   script:
-    - mvn package sonar:sonar -Dmaven.test.skip=true  --settings settings-release.xml
+    - mvn package sonar:sonar -Dmaven.test.skip=true -Dsonar.host.url=${SONAR_URL} --settings settings-release.xml
   only:
     - master
