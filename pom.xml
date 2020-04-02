@@ -82,13 +82,27 @@
     </dependency>
   </dependencies>
 
+  <repositories>
+      <repository>
+          <id>releases</id>
+          <name>Releases</name>
+          <url>https://repository.cern.ch/nexus/content/repositories/c2mon-releases/</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
+      </repository>
+      <repository>
+          <id>snapshots</id>
+          <name>Snapshots</name>
+          <url>https://repository.cern.ch/nexus/content/repositories/c2mon-snapshots/</url>
+          <releases><enabled>false</enabled></releases>
+          <snapshots><enabled>true</enabled></snapshots>
+      </repository>
+  </repositories>
   <build>
     <plugins>
       <!-- Activate plugin configurations to build a tarball and a docker image -->
       <plugin><artifactId>maven-dependency-plugin</artifactId></plugin>
       <plugin><artifactId>maven-assembly-plugin</artifactId></plugin>
-      <!-- To ignore the Docker build run 'mvn package -DskipDockerBuild -DskipDockerTag' -->
-      <plugin><groupId>com.spotify</groupId><artifactId>docker-maven-plugin</artifactId></plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -97,6 +111,10 @@
         <configuration>
           <argLine>-Dserver.port=8888</argLine>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>jib-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
