@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>c2mon-daq-rest</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.9.2-SNAPSHOT</version>
   <packaging>jar</packaging>
   <description>DAQ module for acquiring data via REST by either polling or exposing endpoints</description>
 
