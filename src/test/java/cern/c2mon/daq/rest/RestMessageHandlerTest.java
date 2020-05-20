@@ -130,9 +130,9 @@ public class RestMessageHandlerTest extends GenericMessageHandlerTest implements
   @UseConf("e_rest_test1.xml")
   @Test
   @DirtiesContext
-  public void restGetSendSuccessful() {
+  public void restGetSendSuccessful() throws InterruptedException {
     // create junit captures for the tag id, value and message (for the commmfault tag)
-    Capture<SourceDataTagValue> sdtv = new Capture<>();
+    Capture<SourceDataTagValue> sdtv = EasyMock.newCapture();
 
     messageSender.sendCommfaultTag(107211L, "E_REST_REST1:COMM_FAULT", true, "successfully connected");
     expectLastCall().once();
@@ -166,9 +166,9 @@ public class RestMessageHandlerTest extends GenericMessageHandlerTest implements
   @UseConf("e_rest_test3.xml")
   @Test
   @DirtiesContext
-  public void restGetWithExpressionSendSuccessful() {
+  public void restGetWithExpressionSendSuccessful() throws InterruptedException {
     // create junit captures for the tag id, value and message (for the commmfault tag)
-    Capture<SourceDataTagValue> sdtv = new Capture<>();
+    Capture<SourceDataTagValue> sdtv = EasyMock.newCapture();
 
     messageSender.sendCommfaultTag(107211L, "E_REST_REST1:COMM_FAULT",true, "successfully connected");
     expectLastCall().once();
