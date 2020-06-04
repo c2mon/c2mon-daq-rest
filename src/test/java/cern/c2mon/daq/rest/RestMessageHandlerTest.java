@@ -40,7 +40,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.client.MockRestServiceServer;
 
-import cern.c2mon.daq.rest.config.WebConfigTestStartup;
+import cern.c2mon.daq.rest.config.WebConfigStartupTest;
 import cern.c2mon.daq.rest.webaccess.RESTConnector;
 import cern.c2mon.daq.test.GenericMessageHandlerTest;
 import cern.c2mon.daq.test.UseConf;
@@ -55,7 +55,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @UseHandler(RestMessageHandler.class)
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = WebConfigTestStartup.class)
+@ContextConfiguration(classes = WebConfigStartupTest.class)
 @WebAppConfiguration
 @TestPropertySource(properties = {
     "c2mon.daq.rest.autoConfiguration=false"

@@ -36,7 +36,7 @@ import org.springframework.web.context.WebApplicationContext;
 import cern.c2mon.daq.common.IEquipmentMessageSender;
 import cern.c2mon.daq.rest.address.RestAddressFactory;
 import cern.c2mon.daq.rest.address.RestPostAddress;
-import cern.c2mon.daq.rest.config.WebConfigTestStartup;
+import cern.c2mon.daq.rest.config.WebConfigStartupTest;
 import cern.c2mon.daq.rest.controller.RestController;
 import cern.c2mon.daq.rest.scheduling.PostScheduler;
 import cern.c2mon.shared.common.datatag.ISourceDataTag;
@@ -56,7 +56,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  * Created by fritter on 05/02/16.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = WebConfigTestStartup.class)
+@ContextConfiguration(classes = WebConfigStartupTest.class)
 @WebAppConfiguration
 @TestPropertySource(properties = {
     "c2mon.daq.rest.autoConfiguration=false"
