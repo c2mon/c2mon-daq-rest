@@ -7,7 +7,8 @@ stages:
 
 # Get the settings file from c2mon project
 before_script:
-  - curl https://cern.ch/maven/settings-ci.xml -o settings-ci.xml
+  #- curl https://cern.ch/maven/settings-ci.xml -o settings-ci.xml
+  - curl https://gitlab.cern.ch/c2mon/c2mon/-/raw/master/settings.xml -o settings-ci.xml
 
 # Fully build and publish master branch
 "Build and publish":
