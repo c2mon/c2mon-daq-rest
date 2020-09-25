@@ -21,6 +21,8 @@ import org.springframework.web.client.RestClientException;
 
 import cern.c2mon.daq.common.EquipmentMessageHandler;
 import cern.c2mon.daq.common.conf.equipment.IDataTagChanger;
+import cern.c2mon.daq.rest.config.RestDaqProperties;
+import cern.c2mon.daq.rest.config.TagConfigurer;
 import cern.c2mon.daq.rest.controller.RestController;
 import cern.c2mon.daq.tools.equipmentexceptions.EqIOException;
 import cern.c2mon.shared.common.datatag.ISourceDataTag;
@@ -44,15 +46,22 @@ public class RestMessageHandler extends EquipmentMessageHandler {
 
   @Override
   public void connectToDataSource() throws EqIOException {
+    log.trace("enter connectToDataSource()");
+    
     // class initialization
     RestController restController = getContext().getBean(RestController.class);
-    log.trace("enter connectToDataSource()");
-
-    requestDelegator = new RequestDelegator(getEquipmentMessageSender(), getEquipmentConfiguration(), restController);
+    RestDaqProperties properties = getContext().getBean(RestDaqProperties.class);
+    
+    requestDelegator = new RequestDelegator(getEquipmentMessageSender(), getEquipmentConfiguration());
+    restController.setPostScheduler(requestDelegator.getPostScheduler());
+    
+    if (properties.isAutoConfiguration()) {
+      // add the Scheduler and TagConfigurer to the controller
+      restController.setTagConfigurer(new TagConfigurer(getEquipmentConfiguration().getName()));
+    }
 
     IDataTagChanger dataTagChanger = new RestDataTagChanger(getEquipmentMessageSender(), requestDelegator);
     getEquipmentConfigurationHandler().setDataTagChanger(dataTagChanger);
-
 
     // Adding DataTags to the equipment
     for (ISourceDataTag dataTag : getEquipmentConfiguration().getSourceDataTags().values()) {

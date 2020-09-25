@@ -160,7 +160,7 @@ public class PostScheduler extends RestScheduler {
    */
   @Override
   public void refreshDataTag(Long id) {
-    log.info("Refresh of data tag not possible for POST address");
+    log.debug("Sending refresh of tag #{} not possible (POST address)", id);
   }
 
   private RestPostAddress getAddress(Long id) {

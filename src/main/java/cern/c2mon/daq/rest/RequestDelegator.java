@@ -16,13 +16,13 @@
  *****************************************************************************/
 package cern.c2mon.daq.rest;
 
+import lombok.Getter;
+
 import cern.c2mon.daq.common.IEquipmentMessageSender;
 import cern.c2mon.daq.common.conf.equipment.IDataTagChanger;
 import cern.c2mon.daq.rest.address.RestAddressFactory;
 import cern.c2mon.daq.rest.address.RestGetAddress;
 import cern.c2mon.daq.rest.address.RestPostAddress;
-import cern.c2mon.daq.rest.config.TagConfigurer;
-import cern.c2mon.daq.rest.controller.RestController;
 import cern.c2mon.daq.rest.scheduling.GetScheduler;
 import cern.c2mon.daq.rest.scheduling.PostScheduler;
 import cern.c2mon.daq.rest.scheduling.RestScheduler;
@@ -53,17 +53,13 @@ public class RequestDelegator {
 
   private GetScheduler getScheduler;
 
+  @Getter
   private PostScheduler postScheduler;
 
-  public RequestDelegator(IEquipmentMessageSender sender, IEquipmentConfiguration configuration, RestController controller) {
-
+  public RequestDelegator(IEquipmentMessageSender sender, IEquipmentConfiguration configuration) {
     this.equipmentConfiguration = configuration;
     this.getScheduler = new GetScheduler(sender, configuration);
     this.postScheduler = new PostScheduler(sender, configuration);
-
-    // add the Scheduler and TagConfigurer to the controller
-    controller.setPostScheduler(postScheduler);
-    controller.setTagConfigurer(new TagConfigurer(configuration.getName()));
   }
 
   /**

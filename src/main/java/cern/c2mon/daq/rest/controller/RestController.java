@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (C) 2010-2018 CERN. All rights not expressly granted are reserved.
+a * Copyright (C) 2010-2020 CERN. All rights not expressly granted are reserved.
  * <p/>
  * This file is part of the CERN Control and Monitoring Platform 'C2MON'.
  * C2MON is free software: you can redistribute it and/or modify it under the
@@ -16,12 +16,16 @@
  *****************************************************************************/
 package cern.c2mon.daq.rest.controller;
 
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import cern.c2mon.daq.rest.RestTagUpdate;
 import cern.c2mon.daq.rest.config.TagConfigurer;
@@ -60,7 +64,7 @@ public class RestController {
    * @return The status of the request. If the request was successful to the
    * server the request will be HttpStatus.OK.
    */
-  @RequestMapping(value = "/tags/{identifier}", method = RequestMethod.POST)
+  @PostMapping(value = "/tags/{identifier}")
   @ResponseBody
   public HttpStatus postHandler(@PathVariable("identifier") String identifier, @RequestBody String value) {
     Long tagId;
@@ -82,20 +86,24 @@ public class RestController {
    * @param update The JSON message that we received
    * @return The status of the request. If the request was successful to the server the request will be HttpStatus.OK.
    */
-  @RequestMapping(value = "/update", method = RequestMethod.POST)
+  @PostMapping(value = "/update")
   @ResponseBody
   public HttpStatus postHandlerJson(@RequestBody RestTagUpdate update) {
-    boolean ok = true;
-    if (!postScheduler.tagExist(update.getName())) {
-      ok = tagConfigurer.createTag(update);
+    boolean tagExist = postScheduler.tagExist(update.getName());
+    if (!tagExist && isAutoConfigurationEnabled()) {
+      tagExist = tagConfigurer.createTag(update);
     }
 
-    if (!ok) {
-      log.warn("Could not create new tag for name {}", update.getName());
+    if (!tagExist) {
+      log.warn("Could not create new tag for name {}. Auto-configuration setting: c2mon.daq.rest.autoConfiguration={}", update.getName(), isAutoConfigurationEnabled());
       return HttpStatus.BAD_REQUEST;
     }
 
     ValueUpdate valueUpdate = new ValueUpdate(update.getValue(), update.getValueDescription(), update.getTimestamp());
     return postScheduler.sendValueToServer(update.getName(), valueUpdate);
+  }
+  
+  private boolean isAutoConfigurationEnabled() {
+    return tagConfigurer != null;
   }
 }
