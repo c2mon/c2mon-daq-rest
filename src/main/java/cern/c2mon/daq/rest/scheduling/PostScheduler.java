@@ -18,15 +18,16 @@ package cern.c2mon.daq.rest.scheduling;
 
 import java.util.TimerTask;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+
+import lombok.extern.slf4j.Slf4j;
 
 import cern.c2mon.daq.common.IEquipmentMessageSender;
 import cern.c2mon.daq.rest.address.RestPostAddress;
 import cern.c2mon.shared.common.datatag.ISourceDataTag;
 import cern.c2mon.shared.common.datatag.SourceDataTagQuality;
-import cern.c2mon.shared.common.datatag.SourceDataTagQualityCode;
 import cern.c2mon.shared.common.datatag.ValueUpdate;
+import cern.c2mon.shared.common.datatag.util.SourceDataTagQualityCode;
 import cern.c2mon.shared.common.process.IEquipmentConfiguration;
 
 /**

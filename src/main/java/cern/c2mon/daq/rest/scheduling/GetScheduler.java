@@ -18,14 +18,20 @@ package cern.c2mon.daq.rest.scheduling;
 
 import java.util.TimerTask;
 
-import com.jayway.jsonpath.JsonPath;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.client.RestClientException;
+
+import com.jayway.jsonpath.JsonPath;
+
+import lombok.extern.slf4j.Slf4j;
 
 import cern.c2mon.daq.common.IEquipmentMessageSender;
 import cern.c2mon.daq.rest.address.RestGetAddress;
 import cern.c2mon.daq.rest.webaccess.RESTConnector;
-import cern.c2mon.shared.common.datatag.*;
+import cern.c2mon.shared.common.datatag.ISourceDataTag;
+import cern.c2mon.shared.common.datatag.SourceDataTag;
+import cern.c2mon.shared.common.datatag.SourceDataTagQuality;
+import cern.c2mon.shared.common.datatag.ValueUpdate;
+import cern.c2mon.shared.common.datatag.util.SourceDataTagQualityCode;
 import cern.c2mon.shared.common.process.IEquipmentConfiguration;
 import cern.c2mon.shared.common.type.TypeConverter;
 

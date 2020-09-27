@@ -22,7 +22,7 @@ import cern.c2mon.daq.common.IEquipmentMessageSender;
 import cern.c2mon.daq.common.conf.equipment.IDataTagChanger;
 import cern.c2mon.shared.common.datatag.ISourceDataTag;
 import cern.c2mon.shared.common.datatag.SourceDataTagQuality;
-import cern.c2mon.shared.common.datatag.SourceDataTagQualityCode;
+import cern.c2mon.shared.common.datatag.util.SourceDataTagQualityCode;
 import cern.c2mon.shared.daq.config.ChangeReport;
 
 /**
