@@ -14,7 +14,7 @@ before_script:
 "Build and publish":
   stage: deploy
   script: 
-    - mvn -q -B deploy --settings settings-ci.xml
+    - mvn -B deploy --settings settings-ci.xml
   only:
     - master
     
@@ -22,7 +22,7 @@ before_script:
 build:
   stage: build
   script:
-    - mvn -q -B test -DskipDockerBuild -DskipDockerTag --settings settings-ci.xml
+    - mvn -B test -DskipDockerBuild -DskipDockerTag --settings settings-ci.xml
   except:
     - master
 
