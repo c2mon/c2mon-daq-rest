@@ -24,15 +24,23 @@ build_and_publish:
     - develop
     
 # Just run unit and integration tests on feature branches
-build:
+test:
   stage: build
-  tags: 
-    - docker-privileged
   script:
     - docker info
     - mvn -U -B clean test failsafe:integration-test -DskipDockerBuild -DskipDockerTag --settings settings-ci.xml
   except:
     - tags
+    - develop
+    - master
+
+# Just run unit and integration tests on feature branches
+build_and_package:
+  stage: build
+  script:
+    - docker info
+    - mvn -B pacakge failsafe:integration-test -DskipDockerBuild -DskipDockerTag --settings settings-ci.xml
+  only:
     - master
 
 sonar_preview:
