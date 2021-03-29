@@ -27,7 +27,6 @@ build_and_publish:
 test:
   stage: build
   script:
-    - docker info
     - mvn -U -B clean test failsafe:integration-test -DskipDockerBuild -DskipDockerTag --settings settings-ci.xml
   except:
     - tags
@@ -38,7 +37,6 @@ test:
 build_and_package:
   stage: build
   script:
-    - docker info
     - mvn -B pacakge failsafe:integration-test -DskipDockerBuild -DskipDockerTag --settings settings-ci.xml
   only:
     - master
