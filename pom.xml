@@ -20,6 +20,11 @@
     <tag>HEAD</tag>
   </scm>
 
+  <properties>
+    <gitlab-repo>${project.artifactId}</gitlab-repo>
+    <dockerhub-repo>${project.artifactId}</dockerhub-repo>
+  </properties>
+
   <dependencies>
     <!-- C2MON dependencies -->
     <dependency>
