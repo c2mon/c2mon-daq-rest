@@ -1,2 +1,2 @@
 include:
-  - remote: 'https://gitlab.cern.ch/c2mon/c2mon/-/raw/master/.github/workflows/daq-gitlab-ci.yml'
+  - remote: 'https://gitlab.cern.ch/c2mon/c2mon/-/raw/master/.gitlab-ci-templates/daq-gitlab-ci.yml'
