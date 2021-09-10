@@ -74,7 +74,7 @@ Please check [here](https://gitlab.cern.ch/c2mon/c2mon-daq-rest/tags) for the la
 
 ## Installing
 
-- Download the latest stable distribution tarball
+- Download the [latest stable distribution tarball](https://nexus.web.cern.ch/nexus/service/local/artifact/maven/redirect?r=cern-nexus&g=cern.c2mon.daq&a=c2mon-daq-rest&v=LATEST&e=tar.gz&c=dist)
 - Note, that the tarball does not include a root folder, so you have to create this yourself before extracting it:
   
   ```bash
