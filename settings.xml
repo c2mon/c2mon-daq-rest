@@ -1,0 +1,62 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  
+  <!-- 
+    This file is required for external builts
+   -->
+  <profiles>
+    <profile>
+      <id>c2mon-releases</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      
+      <!-- Variables used for distributionManagement section in pom.xml  -->
+      <properties>
+        <nexus.releases.url>https://nexus.web.cern.ch/nexus/content/repositories/c2mon-releases/</nexus.releases.url>
+        <nexus.snapshots.url>https://nexus.web.cern.ch/nexus/content/repositories/c2mon-snapshots/</nexus.snapshots.url>
+      </properties>
+      
+      <repositories>
+        <repository>
+          <id>nexus-internal-group</id>
+          <name>CERN BE-ICS Public Repositories</name>
+          <url>http://nexus.web.cern.ch/nexus/content/groups/public/</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+          <id>nexus-c2mon</id>
+          <name>C2MON Releases</name>
+          <url>https://nexus.web.cern.ch/nexus/content/repositories/c2mon-releases/</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+          <id>nexus-c2mon-internal</id>
+          <name>C2MON Releases</name>
+          <url>https://nexus.web.cern.ch/nexus/content/repositories/c2mon-internal-releases/</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+          <id>nexus-c2mon-snapshots</id>
+          <name>C2MON Snapshots</name>
+          <url>https://nexus.web.cern.ch/nexus/content/repositories/c2mon-snapshots/</url>
+          <releases><enabled>false</enabled></releases>
+          <snapshots><enabled>true</enabled></snapshots>
+        </repository> 
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>nexus-public</id>
+          <url>https://nexus.web.cern.ch/nexus/content/groups/public/</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>true</enabled></snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+   </profiles>
+</settings>
