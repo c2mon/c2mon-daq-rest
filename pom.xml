@@ -5,11 +5,11 @@
   <parent>
     <groupId>cern.c2mon.daq</groupId>
     <artifactId>c2mon-daq-parent</artifactId>
-    <version>1.11.1</version>
+    <version>1.11.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>c2mon-daq-rest</artifactId>
-  <version>1.11.1-SNAPSHOT</version>
+  <version>1.11.2-SNAPSHOT</version>
   <packaging>jar</packaging>
   <description>DAQ module for acquiring data via REST by either polling or exposing endpoints</description>
 
