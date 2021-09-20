@@ -8,9 +8,14 @@ For more details on a given release, please check also the [version planning](ht
 
 ## Unreleased
 ### Added
+- Added Maven settings.xml that works also outside of CERN and updated README accordingly
 
 ### Changed
 
 ### Fixed
 - Fixed a bug related to auto-configuration. If this feature was turned off (`c2mon.daq.rest.autoConfiguration=false`) the CLient API settings had still to be declared.
+
+
+## 1.11.0 - 2021-09-07
+### Fixed
 - Setting change report to success after successful configuration in order to assure correct saving of change in DAQ Core (CM-311)
