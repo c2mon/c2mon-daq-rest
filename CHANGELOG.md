@@ -13,3 +13,4 @@ For more details on a given release, please check also the [version planning](ht
 
 ### Fixed
 - Fixed a bug related to auto-configuration. If this feature was turned off (`c2mon.daq.rest.autoConfiguration=false`) the CLient API settings had still to be declared.
+- Setting change report to success after successful configuration in order to assure correct saving of change in DAQ Core (CM-311)
