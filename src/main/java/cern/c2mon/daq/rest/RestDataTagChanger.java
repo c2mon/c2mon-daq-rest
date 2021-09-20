@@ -24,6 +24,7 @@ import cern.c2mon.shared.common.datatag.ISourceDataTag;
 import cern.c2mon.shared.common.datatag.SourceDataTagQuality;
 import cern.c2mon.shared.common.datatag.util.SourceDataTagQualityCode;
 import cern.c2mon.shared.daq.config.ChangeReport;
+import cern.c2mon.shared.daq.config.ChangeReport.CHANGE_STATE;
 
 /**
  * @author Franz Ritter
@@ -52,6 +53,7 @@ public class RestDataTagChanger implements IDataTagChanger {
     try {
       requestDelegator.addDataTag(sourceDataTag);
       changeReport.appendInfo("URL successful tested and added");
+      changeReport.setState(CHANGE_STATE.SUCCESS);
     }
     catch (IllegalArgumentException ex) {
       log.warn("DataTag #{} not configurable - Reason: {}", sourceDataTag.getId(), ex.getMessage());
@@ -71,11 +73,13 @@ public class RestDataTagChanger implements IDataTagChanger {
 
     try {
       requestDelegator.removeDataTag(sourceDataTag);
+      changeReport.setState(CHANGE_STATE.SUCCESS);
     }
     catch (IllegalArgumentException ex) {
       log.warn("Problem caused by removing of DataTag " + sourceDataTag.getId() + ": " + ex.getMessage());
       changeReport.appendWarn("Problem caused by removing of the DataTag " + sourceDataTag.getId() + ": " + ex
               .getMessage());
+      changeReport.setState(CHANGE_STATE.REBOOT);
     }
 
     log.trace("Leaving onRemoveDataTag method.");
@@ -87,6 +91,7 @@ public class RestDataTagChanger implements IDataTagChanger {
 
     try {
       requestDelegator.updateDataTag(sourceDataTag, oldSourceDataTag);
+      changeReport.setState(CHANGE_STATE.SUCCESS);
     }
     catch (IllegalArgumentException ex) {
       log.warn("Problem caused by updating of of DataTag " + sourceDataTag.getId() + ": " + ex.getMessage

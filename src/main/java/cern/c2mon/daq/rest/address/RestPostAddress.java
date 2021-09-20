@@ -37,6 +37,8 @@ import cern.c2mon.shared.common.datatag.address.impl.HardwareAddressImpl;
 @Setter
 public class RestPostAddress extends HardwareAddressImpl {
 
+  /** Serial version UID */
+  private static final long serialVersionUID = 6726801422730213210L;
   /**
    * The frequency determines in which time interval a post message is
    * expected. If no message is received in the given interval the daq will

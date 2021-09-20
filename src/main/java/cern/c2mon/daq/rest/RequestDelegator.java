@@ -118,7 +118,7 @@ public class RequestDelegator {
 
       Long tagId = sdt.getId();
 
-      //delete teh old task from the old scheduler
+      //delete the old task from the old scheduler
       RestScheduler scheduler = getScheduler(oldSdt.getHardwareAddress());
       scheduler.removeTask(tagId);
 

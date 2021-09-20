@@ -41,6 +41,9 @@ import cern.c2mon.shared.common.datatag.address.impl.HardwareAddressImpl;
 @Setter
 public class RestGetAddress extends HardwareAddressImpl {
 
+  /** Serial version UID */
+  private static final long serialVersionUID = -191188917052685332L;
+
   /**
    * The url of the webservice to make the get request.
    */
